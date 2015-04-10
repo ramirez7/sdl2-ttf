@@ -22,10 +22,10 @@ examples :: [(Text, SDL.Window -> FilePath -> IO ())]
 examples = [
   ("Loading font, blitting some text",
     \window path -> do
-      font   <- SDL.Font.load path 50
-      screen <- SDL.getWindowSurface window
+      font   <- SDL.Font.load path 70
       text   <- SDL.Font.renderBlended font red "Why hello there!"
       SDL.Font.freeFont font
+      screen <- SDL.getWindowSurface window
       SDL.blitSurface text Nothing screen Nothing
       SDL.freeSurface text
       SDL.updateWindowSurface window)]
