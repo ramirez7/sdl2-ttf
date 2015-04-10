@@ -216,8 +216,7 @@ toMaskWith convert = foldr (.|.) 0 . map convert
 
 -- | Possible styles that can be applied to a 'Font'.
 data Style
-  = Normal
-  | Bold
+  = Bold
   | Italic
   | Underline
   | Strikethrough
@@ -226,21 +225,19 @@ data Style
 styleToCInt :: Style -> CInt
 styleToCInt =
   \case
-    Normal        -> SDL.Raw.Font.TTF_STYLE_NORMAL
     Bold          -> SDL.Raw.Font.TTF_STYLE_BOLD
     Italic        -> SDL.Raw.Font.TTF_STYLE_ITALIC
     Underline     -> SDL.Raw.Font.TTF_STYLE_UNDERLINE
     Strikethrough -> SDL.Raw.Font.TTF_STYLE_STRIKETHROUGH
 
--- | Gets the rendering style of a given font. If none was ever set, this
--- will be a list containing only 'Normal'.
+-- | Gets the rendering styles of a given font. If none were ever set, this
+-- will be an empty list.
 getStyle :: MonadIO m => Font -> m [Style]
 getStyle (Font font) = do
   cint <- SDL.Raw.Font.getFontStyle font
   return $ fromMaskWith styleToCInt cint
 
--- | Sets the rendering style of a font. If none is given, the default of
--- 'Normal' will be used.
+-- | Sets the rendering styles of a font. Use an empty list to reset the style.
 setStyle :: MonadIO m => Font -> [Style] -> m ()
 setStyle (Font font) = SDL.Raw.Font.setFontStyle font . toMaskWith styleToCInt
 
