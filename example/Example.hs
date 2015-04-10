@@ -5,5 +5,6 @@ import qualified SDL.Font
 
 main :: IO ()
 main = do
-  v <- SDL.Font.version
-  print v
+  SDL.Font.initialize
+  print =<< SDL.Font.version
+  SDL.Font.quit
