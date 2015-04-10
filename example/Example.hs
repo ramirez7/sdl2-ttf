@@ -68,6 +68,18 @@ examples = [
       SDL.freeSurface text
       SDL.updateWindowSurface window),
 
+  ("Blitting outlined",
+    \window path -> do
+      font <- SDL.Font.load path 65
+      SDL.Font.setOutline font 3
+      print =<< SDL.Font.getOutline font
+      text <- SDL.Font.blended font red "Outlined!"
+      SDL.Font.free font
+      screen <- SDL.getWindowSurface window
+      SDL.blitSurface text Nothing screen Nothing
+      SDL.freeSurface text
+      SDL.updateWindowSurface window),
+
   ("Decoding from bytestring",
     \window path -> do
       bytes <- readFile path

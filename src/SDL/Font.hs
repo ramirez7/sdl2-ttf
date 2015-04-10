@@ -50,6 +50,9 @@ module SDL.Font
   , Style(..)
   , getStyle
   , setStyle
+  , Outline
+  , getOutline
+  , setOutline
   ) where
 
 import Control.Monad          (unless)
@@ -240,3 +243,14 @@ getStyle (Font font) = do
 -- 'Normal' will be used.
 setStyle :: MonadIO m => Font -> [Style] -> m ()
 setStyle (Font font) = SDL.Raw.Font.setFontStyle font . toMaskWith styleToCInt
+
+-- | The size of the font outline, in pixels. Use 0 to turn off outlining.
+type Outline = Int
+
+-- | Gets the current outline size of a given font.
+getOutline :: MonadIO m => Font -> m Outline
+getOutline (Font font) = fromIntegral `fmap` SDL.Raw.Font.getFontOutline font
+
+-- | Sets the outline size for a given font. Use 0 to turn off outlining.
+setOutline :: MonadIO m => Font -> Outline -> m ()
+setOutline (Font font) = SDL.Raw.Font.setFontOutline font . fromIntegral
