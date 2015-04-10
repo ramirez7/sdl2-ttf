@@ -335,18 +335,19 @@ isMonospace = fmap toBool . SDL.Raw.Font.fontFaceIsFixedWidth . unwrap
 cStringToText :: MonadIO m => CString -> m Text
 cStringToText = fmap decodeUtf8 . liftIO . unsafePackCString
 
+onlyIfM :: Monad m => Bool -> m a -> m (Maybe a)
+onlyIfM = \case
+  False -> return . const Nothing
+  True  -> fmap Just
+
 -- | Gets the current font face family name, if any.
 familyName :: MonadIO m => Font -> m (Maybe Text)
 familyName (Font font) = do
   cstr <- SDL.Raw.Font.fontFaceFamilyName font
-  case cstr == nullPtr of
-    True  -> return Nothing
-    False -> fmap Just $ cStringToText cstr
+  onlyIfM (cstr /= nullPtr) $ cStringToText cstr
 
 -- | Gets the current font face style name, if any.
 styleName :: MonadIO m => Font -> m (Maybe Text)
 styleName (Font font) = do
   cstr <- SDL.Raw.Font.fontFaceStyleName font
-  case cstr == nullPtr of
-    True  -> return Nothing
-    False -> fmap Just $ cStringToText cstr
+  onlyIfM (cstr /= nullPtr) $ cStringToText cstr
