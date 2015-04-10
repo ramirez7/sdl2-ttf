@@ -1,6 +1,93 @@
+{-|
+
+Module      : SDL.Raw.Font
+Description : Low-level bindings.
+Copyright   : (c) 2015 Siniša Biđin
+License     : MIT
+Maintainer  : sinisa@bidin.cc
+Stability   : experimental
+
+Low-level bindings to the SDL_ttf library. No error-handling is done here.
+For more information about specific function behaviour, see the @SDL_ttf@
+documentation.
+
+-}
+
 {-# LANGUAGE PatternSynonyms #-}
 
-module SDL.Raw.Font where
+module SDL.Raw.Font
+  (
+  -- * General
+    init
+  , wasInit
+  , quit
+  , getVersion
+
+  -- * Loading fonts
+  , Font
+  , FontPath
+  , PointSize
+  , openFont
+  , Free
+  , openFont_RW
+  , Index
+  , openFontIndex
+  , openFontIndex_RW
+  , closeFont
+
+  -- * Font attributes
+  , getFontStyle
+  , setFontStyle
+  , pattern TTF_STYLE_NORMAL
+  , pattern TTF_STYLE_BOLD
+  , pattern TTF_STYLE_ITALIC
+  , pattern TTF_STYLE_STRIKETHROUGH
+  , getFontOutline
+  , setFontOutline
+  , getFontHinting
+  , setFontHinting
+  , pattern TTF_HINTING_NORMAL
+  , pattern TTF_HINTING_LIGHT
+  , pattern TTF_HINTING_MONO
+  , pattern TTF_HINTING_NONE
+  , getFontKerning
+  , setFontKerning
+  , fontHeight
+  , fontAscent
+  , fontDescent
+  , fontLineSkip
+  , fontFaces
+  , fontFaceIsFixedWidth
+  , fontFaceFamilyName
+  , fontFaceStyleName
+  , glyphIsProvided
+  , glyphMetrics
+
+  -- * Getting text size
+  , sizeText
+  , sizeUTF8
+  , sizeUNICODE
+
+  -- * Rendering text
+  , renderText_Solid
+  , renderText_Shaded
+  , renderText_Blended
+  , renderUTF8_Solid
+  , renderUTF8_Shaded
+  , renderUTF8_Blended
+  , renderUNICODE_Solid
+  , renderUNICODE_Shaded
+  , renderUNICODE_Blended
+  , renderGlyph_Solid
+  , renderGlyph_Shaded
+  , renderGlyph_Blended
+
+  -- * Other
+  , byteSwappedUNICODE
+  , pattern UNICODE_BOM_NATIVE
+  , pattern UNICODE_BOM_SWAPPED
+
+  ) where
 
 import Control.Monad.IO.Class (MonadIO, liftIO)
 import Foreign.C.String       (CString)
@@ -37,18 +124,19 @@ foreign import ccall "SDL_ttf.h TTF_Quit"
 quit :: MonadIO m => m ()
 quit = liftIO quit'
 
-type Path = CString
+type FontPath = CString
 
+-- | Point size (based on 72DPI). Translates to pixel height.
 type PointSize = CInt
 
--- SDL_ttf recommends not messing with the underlying struct.
+-- | The raw, underlying TTF_Font struct.
 data Font
 
 foreign import ccall "SDL_ttf.h TTF_OpenFont"
-  openFont' :: Path -> PointSize -> IO (Ptr Font)
+  openFont' :: FontPath -> PointSize -> IO (Ptr Font)
 
 {-# INLINE openFont #-}
-openFont :: MonadIO m => Path -> PointSize -> m (Ptr Font)
+openFont :: MonadIO m => FontPath -> PointSize -> m (Ptr Font)
 openFont path = liftIO . openFont' path
 
 -- | Should the 'Ptr' 'RWops' be freed after an operation? 1 for yes, 0 for no.
@@ -61,13 +149,14 @@ foreign import ccall "SDL_ttf.h TTF_OpenFontRW"
 openFont_RW :: MonadIO m => Ptr RWops -> Free -> PointSize -> m (Ptr Font)
 openFont_RW src free = liftIO . openFont_RW' src free
 
+-- | Indicates the font face we're loading. First face is always 0.
 type Index = CLong
 
 foreign import ccall "SDL_ttf.h TTF_OpenFontIndex"
-  openFontIndex' :: Path -> PointSize -> Index -> IO (Ptr Font)
+  openFontIndex' :: FontPath -> PointSize -> Index -> IO (Ptr Font)
 
 {-# INLINE openFontIndex #-}
-openFontIndex :: MonadIO m => Path -> PointSize -> Index -> m (Ptr Font)
+openFontIndex :: MonadIO m => FontPath -> PointSize -> Index -> m (Ptr Font)
 openFontIndex path index = liftIO . openFontIndex' path index
 
 foreign import ccall "SDL_ttf.h TTF_OpenFontIndexRW"
@@ -90,6 +179,9 @@ foreign import ccall "SDL_ttf.h TTF_ByteSwappedUNICODE"
 {-# INLINE byteSwappedUNICODE #-}
 byteSwappedUNICODE :: MonadIO m => CInt -> m ()
 byteSwappedUNICODE = liftIO . byteSwappedUNICODE'
+
+pattern UNICODE_BOM_NATIVE  = #{const UNICODE_BOM_NATIVE}
+pattern UNICODE_BOM_SWAPPED = #{const UNICODE_BOM_SWAPPED}
 
 foreign import ccall "SDL_ttf.h TTF_GetFontStyle"
   getFontStyle' :: Ptr Font -> IO CInt
@@ -366,5 +458,3 @@ pattern TTF_STYLE_BOLD          = #{const TTF_STYLE_BOLD}
 pattern TTF_STYLE_ITALIC        = #{const TTF_STYLE_ITALIC}
 pattern TTF_STYLE_NORMAL        = #{const TTF_STYLE_NORMAL}
 pattern TTF_STYLE_STRIKETHROUGH = #{const TTF_STYLE_STRIKETHROUGH}
-pattern UNICODE_BOM_NATIVE      = #{const UNICODE_BOM_NATIVE}
-pattern UNICODE_BOM_SWAPPED     = #{const UNICODE_BOM_SWAPPED}
