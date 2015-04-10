@@ -30,7 +30,7 @@ import Data.List              (find)
 import Data.Text              (Text, pack)
 import Data.Text.Foreign      (lengthWord16, unsafeCopyToPtr)
 import Data.Typeable          (Typeable)
-import Data.Word              (Word8)
+import Data.Word              (Word8, Word16)
 import Foreign.C.String       (withCString)
 import Foreign.C.Types        (CInt, CUShort)
 import Foreign.Marshal.Alloc  (allocaBytes, alloca)
@@ -85,39 +85,49 @@ freeFont = SDL.Raw.Font.closeFont . fontPtr
 
 type Color = V4 Word8
 
--- FIXME: The following functions make sure to append a terminating \0 to all
--- copies of a Text they make. Is this necessary?
-
-renderSolid :: MonadIO m => Font -> Color -> Text -> m SDL.Surface
-renderSolid (Font font) (V4 r g b a) text =
-  let bytelen = 2*(lengthWord16 text + 1) in
+-- | Renders 'Text' using the /quick and dirty/ method. Is the fastest of the
+-- rendering methods, but results in text that isn't as /smooth/.
+solid :: MonadIO m => Font -> Color -> Text -> m SDL.Surface
+solid (Font font) (V4 r g b a) text =
   fmap SDL.Surface .
     throwIfNull "SDL.Font.render" "TTF_RenderUNICODE_Solid" .
-      liftIO . allocaBytes bytelen $ \textPtr -> do
-        unsafeCopyToPtr text textPtr
-        pokeByteOff textPtr (bytelen - 2) (0 :: CUShort)
-        with (SDL.Raw.Color r g b a) $ \colorPtr ->
-          SDL.Raw.Font.renderUNICODE_Solid font (castPtr textPtr) colorPtr
+      liftIO . withText text $ \ptr ->
+        with (SDL.Raw.Color r g b a) $ \fg ->
+          SDL.Raw.Font.renderUNICODE_Solid font (castPtr ptr) fg
 
-renderShaded :: MonadIO m => Font -> Color -> Color -> Text -> m SDL.Surface
-renderShaded (Font font) (V4 r g b a) (V4 r2 g2 b2 a2) text =
-  let bytelen = 2*(lengthWord16 text + 1) in
+-- | Uses the /slow and nice, but with a solid box/ method. Renders slower than
+-- 'solid', but in about the same time as 'blended'. Results in a 'Surface'
+-- containing antialiased text of a foreground color surrounded by a box of a
+-- background color. This 'Surface' will blit as fast as the one from 'solid'.
+shaded :: MonadIO m => Font -> Color -> Color -> Text -> m SDL.Surface
+shaded (Font font) (V4 r g b a) (V4 r2 g2 b2 a2) text =
   fmap SDL.Surface .
     throwIfNull "SDL.Font.render" "TTF_RenderUNICODE_Solid" .
-      liftIO . allocaBytes bytelen $ \textPtr -> do
-        unsafeCopyToPtr text textPtr
-        pokeByteOff textPtr (bytelen - 2) (0 :: CUShort)
-        with (SDL.Raw.Color r g b a) $ \fgPtr ->
-          with (SDL.Raw.Color r2 g2 b2 a2) $ \bgPtr ->
-            SDL.Raw.Font.renderUNICODE_Shaded font (castPtr textPtr) fgPtr bgPtr
+      liftIO . withText text $ \ptr -> do
+        with (SDL.Raw.Color r g b a) $ \fg ->
+          with (SDL.Raw.Color r2 g2 b2 a2) $ \bg ->
+            SDL.Raw.Font.renderUNICODE_Shaded font (castPtr ptr) fg bg
 
-renderBlended :: MonadIO m => Font -> Color -> Text -> m SDL.Surface
-renderBlended (Font font) (V4 r g b a) text =
-  let bytelen = 2*(lengthWord16 text + 1) in
+-- | The /slow slow slow, but ultra nice over another image/ method, 'blended'
+-- renders text at high quality. The text is antialiased and surrounded by a
+-- transparent box. Renders slower than 'solid', but in about the same time as
+-- 'shaded'. The resulting 'Surface' will blit slower than the ones from
+-- 'solid' or 'shaded'.
+blended :: MonadIO m => Font -> Color -> Text -> m SDL.Surface
+blended (Font font) (V4 r g b a) text =
   fmap SDL.Surface .
     throwIfNull "SDL.Font.render" "TTF_RenderUNICODE_Blended" .
-      liftIO . allocaBytes bytelen $ \textPtr -> do
-        unsafeCopyToPtr text textPtr
-        pokeByteOff textPtr (bytelen - 2) (0 :: CUShort)
-        with (SDL.Raw.Color r g b a) $ \colorPtr ->
-          SDL.Raw.Font.renderUNICODE_Blended font (castPtr textPtr) colorPtr
+      liftIO . withText text $ \ptr -> do
+        with (SDL.Raw.Color r g b a) $ \fg ->
+          SDL.Raw.Font.renderUNICODE_Blended font (castPtr ptr) fg
+
+-- Analogous to Data.Text.Foreign.useAsPtr, just appends a null-byte.
+-- FIXME: Is this even necessary?
+withText :: Text -> (Ptr Word16 -> IO a) -> IO a
+withText text act =
+  allocaBytes len $ \ptr -> do
+    unsafeCopyToPtr text ptr
+    pokeByteOff ptr (len - 2) (0 :: CUShort)
+    act ptr
+  where
+    len = 2*(lengthWord16 text + 1)
