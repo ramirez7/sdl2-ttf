@@ -56,6 +56,14 @@ module SDL.Font
   , Hinting(..)
   , getHinting
   , setHinting
+  , Kerning
+  , getKerning
+  , setKerning
+  , height
+  , ascent
+  , descent
+  , lineSkip
+  , isMonospace
   ) where
 
 import Control.Monad          (unless)
@@ -71,7 +79,7 @@ import Data.Word              (Word8, Word16)
 import Foreign.C.String       (withCString)
 import Foreign.C.Types        (CUShort, CInt)
 import Foreign.Marshal.Alloc  (allocaBytes)
-import Foreign.Marshal.Utils  (with)
+import Foreign.Marshal.Utils  (with, fromBool, toBool)
 import Foreign.Ptr            (Ptr, castPtr)
 import Foreign.Storable       (peek, pokeByteOff)
 import GHC.Generics           (Generic)
@@ -107,7 +115,7 @@ quit :: MonadIO m => m ()
 quit = SDL.Raw.Font.quit
 
 -- | Represents a loaded font.
-newtype Font = Font (Ptr SDL.Raw.Font.Font)
+newtype Font = Font { unwrap :: Ptr SDL.Raw.Font.Font }
   deriving (Eq, Typeable)
 
 -- | Point size (based on 72DPI) to load font as. Translates to pixel height.
@@ -155,7 +163,7 @@ decodeIndex bytes size i = liftIO $ do
 
 -- | Frees a loaded 'Font'.
 free :: MonadIO m => Font -> m ()
-free (Font font) = SDL.Raw.Font.closeFont font
+free = SDL.Raw.Font.closeFont . unwrap
 
 -- | Color as an RGBA byte vector.
 type Color = V4 Word8
@@ -236,9 +244,7 @@ styleToCInt =
 -- | Gets the rendering styles of a given 'Font'. If none were ever set, this
 -- will be an empty list.
 getStyle :: MonadIO m => Font -> m [Style]
-getStyle (Font font) = do
-  cint <- SDL.Raw.Font.getFontStyle font
-  return $ fromMaskWith styleToCInt cint
+getStyle = fmap (fromMaskWith styleToCInt) . SDL.Raw.Font.getFontStyle . unwrap
 
 -- | Sets the rendering style of a 'Font'. Use an empty list to reset the style.
 setStyle :: MonadIO m => Font -> [Style] -> m ()
@@ -249,7 +255,7 @@ type Outline = Int
 
 -- | Gets the current outline size of a given 'Font'.
 getOutline :: MonadIO m => Font -> m Outline
-getOutline (Font font) = fromIntegral `fmap` SDL.Raw.Font.getFontOutline font
+getOutline = fmap fromIntegral . SDL.Raw.Font.getFontOutline . unwrap
 
 -- | Sets the outline size for a given 'Font'. Use 0 to turn off outlining.
 setOutline :: MonadIO m => Font -> Outline -> m ()
@@ -282,8 +288,43 @@ cIntToHinting =
 
 -- | Gets the hinting setting of a given 'Font'.
 getHinting :: MonadIO m => Font -> m Hinting
-getHinting (Font font) = cIntToHinting `fmap` SDL.Raw.Font.getFontHinting font
+getHinting = fmap cIntToHinting . SDL.Raw.Font.getFontHinting . unwrap
 
 -- | Sets the rendering styles of a font. Use an empty list to reset the style.
 setHinting :: MonadIO m => Font -> Hinting -> m ()
 setHinting (Font font) = SDL.Raw.Font.setFontHinting font . hintingToCInt
+
+-- | Whether kerning is enabled or not. The default for a newly-loaded 'Font'
+-- is enabled.
+type Kerning = Bool
+
+-- | Gets the current kerning setting of a given 'Font'.
+getKerning :: MonadIO m => Font -> m Kerning
+getKerning = fmap toBool . SDL.Raw.Font.getFontKerning . unwrap
+
+-- | Sets the kerning setting for a given 'Font'. Use False to turn off kerning.
+setKerning :: MonadIO m => Font -> Kerning -> m ()
+setKerning (Font font) = SDL.Raw.Font.setFontKerning font . fromBool
+
+-- | Gets the maximum pixel height of all glyphs of a given 'Font'.
+height :: MonadIO m => Font -> m Int
+height = fmap fromIntegral . SDL.Raw.Font.fontHeight . unwrap
+
+-- | Gets the maximum pixel ascent of all glyphs of a given 'Font'. This can be
+-- interpreted as the distance from the top of the font to the baseline.
+ascent :: MonadIO m => Font -> m Int
+ascent = fmap fromIntegral . SDL.Raw.Font.fontAscent . unwrap
+
+-- | Gets the maximum pixel descent of all glyphs of a given 'Font'. Also
+-- interpreted as the distance from the baseline to the bottom of the font.
+descent :: MonadIO m => Font -> m Int
+descent = fmap fromIntegral . SDL.Raw.Font.fontDescent . unwrap
+
+-- | Gets the recommended pixel height of a rendered line of text of a given
+-- 'Font'. This is usually larger than what 'height' would return.
+lineSkip :: MonadIO m => Font -> m Int
+lineSkip = fmap fromIntegral . SDL.Raw.Font.fontLineSkip . unwrap
+
+-- | Tests whether the current face of a 'Font' is a fixed width font or not.
+isMonospace :: MonadIO m => Font -> m Bool
+isMonospace = fmap toBool . SDL.Raw.Font.fontFaceIsFixedWidth . unwrap
