@@ -41,32 +41,28 @@ module SDL.Font
   , blended
   ) where
 
-import Control.Exception      (bracket, throwIO)
 import Control.Monad          (unless)
 import Control.Monad.IO.Class (MonadIO, liftIO)
-import Data.Bits              ((.|.))
-import Data.ByteString        (ByteString)
-import Data.ByteString.Unsafe (unsafeUseAsCStringLen)
-import Data.Data              (Data)
-import Data.List              (find)
-import Data.Text              (Text, pack)
+-- import Data.ByteString        (ByteString)
+-- import Data.ByteString.Unsafe (unsafeUseAsCStringLen)
+import Data.Text              (Text)
 import Data.Text.Foreign      (lengthWord16, unsafeCopyToPtr)
 import Data.Typeable          (Typeable)
 import Data.Word              (Word8, Word16)
 import Foreign.C.String       (withCString)
-import Foreign.C.Types        (CInt, CUShort)
-import Foreign.Marshal.Alloc  (allocaBytes, alloca)
+import Foreign.C.Types        (CUShort)
+import Foreign.Marshal.Alloc  (allocaBytes)
 import Foreign.Marshal.Utils  (with)
-import Foreign.Ptr            (Ptr, castPtr, nullPtr)
-import Foreign.Storable       (peek, poke, pokeByteOff)
-import GHC.Generics           (Generic)
+import Foreign.Ptr            (Ptr, castPtr)
+import Foreign.Storable       (peek, pokeByteOff)
+-- import GHC.Generics           (Generic)
 import Linear                 (V4(..))
-import SDL                    (Renderer, Texture, Surface(..))
-import SDL.Exception          (SDLException(..), throwIfNull, throwIfNeg_)
-import SDL.Raw.Filesystem     (rwFromFile, rwFromConstMem)
+import SDL                    (Surface(..))
+import SDL.Exception          (throwIfNull, throwIfNeg_)
+-- import SDL.Raw.Filesystem     (rwFromFile, rwFromConstMem)
 import SDL.Raw.Font           (PointSize)
-import SDL.Raw.Types          (RWops)
-import System.IO.Unsafe       (unsafePerformIO)
+-- import SDL.Raw.Types          (RWops)
+-- import System.IO.Unsafe       (unsafePerformIO)
 
 import qualified SDL.Raw
 import qualified SDL.Raw.Font
@@ -94,6 +90,7 @@ quit = SDL.Raw.Font.quit
 
 -- | Represents a loaded font.
 newtype Font = Font (Ptr SDL.Raw.Font.Font)
+  deriving (Eq, Typeable)
 
 -- | Given a path to a @TTF@ or @FON@ file, loads it for use as a 'Font' at a
 -- certain 'PointSize'.
