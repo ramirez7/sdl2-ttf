@@ -1,4 +1,21 @@
-{-# LANGUAGE OverloadedStrings #-}
+{-|
+
+Module      : SDL.Font
+Description : High-level bindings.
+Copyright   : (c) 2015 Siniša Biđin
+License     : MIT
+Maintainer  : sinisa@bidin.cc
+Stability   : experimental
+
+High-level bindings to the @SDL_ttf@ library.
+
+-}
+
+{-# LANGUAGE DeriveDataTypeable    #-}
+{-# LANGUAGE DeriveGeneric         #-}
+{-# LANGUAGE LambdaCase            #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE OverloadedStrings     #-}
 
 module SDL.Font where
 
