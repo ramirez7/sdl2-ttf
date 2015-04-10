@@ -25,10 +25,15 @@ module SDL.Font
   , quit
 
   -- * Loading fonts
+  --
+  -- | Use the following actions to load @TTF@ and @FON@ file formats.
   , Font(..)
   , PointSize
   , load
+  , Index
+  , loadIndex
   , decode
+  , decodeIndex
   , free
 
   -- * Rendering text
@@ -96,8 +101,8 @@ newtype Font = Font (Ptr SDL.Raw.Font.Font)
 -- | Point size (based on 72DPI) to load font as. Translates to pixel height.
 type PointSize = Int
 
--- | Given a path to a @TTF@ or @FON@ file, loads it for use as a 'Font' at a
--- certain 'PointSize'.
+-- | Given a path to a font file, loads it for use as a 'Font' at a certain
+-- 'PointSize'.
 load :: MonadIO m => FilePath -> PointSize -> m Font
 load path size = do
   fmap Font .
@@ -105,8 +110,7 @@ load path size = do
       liftIO . withCString path $
         flip SDL.Raw.Font.openFont $ fromIntegral size
 
--- | Same as 'load', but accepts a 'ByteString' containing a @TTF@ or @FON@
--- file instead.
+-- | Same as 'load', but accepts a 'ByteString' containing a font instead.
 decode :: MonadIO m => ByteString -> PointSize -> m Font
 decode bytes size = liftIO $ do
   unsafeUseAsCStringLen bytes $ \(cstr, len) -> do
@@ -114,6 +118,28 @@ decode bytes size = liftIO $ do
     fmap Font .
       throwIfNull "SDL.Font.decode" "TTF_OpenFontRW" $
         SDL.Raw.Font.openFont_RW rw 0 $ fromIntegral size
+
+-- | Designates a font face, the default and first one being 0.
+type Index = Int
+
+-- | Given a path to a font file, loads one of its font faces (designated by
+-- the given index) for use as a 'Font' at a certain 'PointSize'. The first
+-- face is always index 0, and is the one chosen by default when using 'load'.
+loadIndex :: MonadIO m => FilePath -> PointSize -> Index -> m Font
+loadIndex path size i = do
+  fmap Font .
+    throwIfNull "SDL.Font.loadIndex" "TTF_OpenFontIndex" .
+      liftIO . withCString path $ \cpath ->
+        SDL.Raw.Font.openFontIndex cpath (fromIntegral size) (fromIntegral i)
+
+-- | Same as 'loadIndex', but accepts a 'ByteString' containing a font instead.
+decodeIndex :: MonadIO m => ByteString -> PointSize -> Index -> m Font
+decodeIndex bytes size i = liftIO $ do
+  unsafeUseAsCStringLen bytes $ \(cstr, len) -> do
+    rw <- rwFromConstMem (castPtr cstr) (fromIntegral len)
+    fmap Font .
+      throwIfNull "SDL.Font.decodeIndex" "TTF_OpenFontIndexRW" $
+        SDL.Raw.Font.openFontIndex_RW rw 0 (fromIntegral size) (fromIntegral i)
 
 -- | Frees a loaded 'Font'.
 free :: MonadIO m => Font -> m ()
