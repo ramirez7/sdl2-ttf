@@ -17,7 +17,29 @@ High-level bindings to the @SDL_ttf@ library.
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE OverloadedStrings     #-}
 
-module SDL.Font where
+module SDL.Font
+  (
+  -- * General
+    initialize
+  , version
+  , quit
+
+  -- * Loading fonts
+  , Font(..)
+  , load
+  , free
+
+  -- * Rendering text
+  --
+  -- | Use the following actions to render text to a 'Surface'. The differing
+  -- methods available are described in more detail in the original @SDL_ttf@
+  -- documentation
+  -- <http://www.libsdl.org/projects/SDL_ttf/docs/SDL_ttf.html#SEC42 here>.
+  , Color
+  , solid
+  , shaded
+  , blended
+  ) where
 
 import Control.Exception      (bracket, throwIO)
 import Control.Monad          (unless)
@@ -50,13 +72,15 @@ import qualified SDL.Raw
 import qualified SDL.Raw.Font
 
 -- | Gets the major, minor, patch versions of the linked @SDL_ttf@ library.
+-- You may call this without initializing the library with 'initialize'.
 version :: (Integral a, MonadIO m) => m (a, a, a)
 version = liftIO $ do
   SDL.Raw.Version major minor patch <- peek =<< SDL.Raw.Font.getVersion
   return (fromIntegral major, fromIntegral minor, fromIntegral patch)
 
--- | Initializes the library. This must be called before any other part of the
--- library is used. You may call this multiple times.
+-- | Initializes the library. Unless noted otherwise, this must be called
+-- before any other part of the library is used. You may call this multiple
+-- times.
 initialize :: MonadIO m => m ()
 initialize = do
   init'd <- (== 1) `fmap` SDL.Raw.Font.wasInit
@@ -69,10 +93,10 @@ quit :: MonadIO m => m ()
 quit = SDL.Raw.Font.quit
 
 -- | Represents a loaded font.
-newtype Font = Font { fontPtr :: Ptr SDL.Raw.Font.Font }
+newtype Font = Font (Ptr SDL.Raw.Font.Font)
 
--- | Loads a file for use as a 'Font', at a certain 'PointSize'. Works with
--- @TTF@ and @FON@ files.
+-- | Given a path to a @TTF@ or @FON@ file, loads it for use as a 'Font' at a
+-- certain 'PointSize'.
 load :: MonadIO m => FilePath -> PointSize -> m Font
 load path size = do
   fmap Font .
@@ -80,9 +104,10 @@ load path size = do
       liftIO . withCString path $ flip SDL.Raw.Font.openFont size
 
 -- | Frees a loaded 'Font'.
-freeFont :: MonadIO m => Font -> m ()
-freeFont = SDL.Raw.Font.closeFont . fontPtr
+free :: MonadIO m => Font -> m ()
+free (Font font) = SDL.Raw.Font.closeFont font
 
+-- | Color as an RGBA byte vector.
 type Color = V4 Word8
 
 -- | Renders 'Text' using the /quick and dirty/ method. Is the fastest of the

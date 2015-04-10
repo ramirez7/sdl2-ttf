@@ -23,8 +23,8 @@ examples = [
   ("Loading font, blitting some text",
     \window path -> do
       font   <- SDL.Font.load path 70
-      text   <- SDL.Font.renderBlended font red "Why hello there!"
-      SDL.Font.freeFont font
+      text   <- SDL.Font.blended font red "Why hello there!"
+      SDL.Font.free font
       screen <- SDL.getWindowSurface window
       SDL.blitSurface text Nothing screen Nothing
       SDL.freeSurface text
