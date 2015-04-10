@@ -41,6 +41,7 @@ module SDL.Raw.Font
   , pattern TTF_STYLE_NORMAL
   , pattern TTF_STYLE_BOLD
   , pattern TTF_STYLE_ITALIC
+  , pattern TTF_STYLE_UNDERLINE
   , pattern TTF_STYLE_STRIKETHROUGH
   , getFontOutline
   , setFontOutline
@@ -198,9 +199,10 @@ foreign import ccall "SDL_ttf.h TTF_SetFontStyle"
 setFontStyle :: MonadIO m => Ptr Font -> CInt -> m ()
 setFontStyle font = liftIO . setFontStyle' font
 
+pattern TTF_STYLE_NORMAL        = #{const TTF_STYLE_NORMAL}
 pattern TTF_STYLE_BOLD          = #{const TTF_STYLE_BOLD}
 pattern TTF_STYLE_ITALIC        = #{const TTF_STYLE_ITALIC}
-pattern TTF_STYLE_NORMAL        = #{const TTF_STYLE_NORMAL}
+pattern TTF_STYLE_UNDERLINE     = #{const TTF_STYLE_UNDERLINE}
 pattern TTF_STYLE_STRIKETHROUGH = #{const TTF_STYLE_STRIKETHROUGH}
 
 foreign import ccall "SDL_ttf.h TTF_GetFontOutline"
