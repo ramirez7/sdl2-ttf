@@ -13,7 +13,7 @@ cabal-version: >=1.10
 
 source-repository head
   type:     git
-  location: https://github.com/sbidin/sdl2-image.git
+  location: https://github.com/sbidin/sdl2-ttf.git
 
 library
   ghc-options: -Wall -O2
