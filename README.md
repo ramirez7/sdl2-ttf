@@ -28,5 +28,6 @@ or feel that something is missing or should be added.
 
 High-level bindings to:
 
-* All functions from `3.3 Attributes`.
+* GlyphIsProvided, GlyphMetrics
+* TTF_Size(Text, UTF8, UNICODE)
 * Rendering latin1 strings and individual glyphs.
