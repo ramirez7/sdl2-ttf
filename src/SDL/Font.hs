@@ -26,6 +26,7 @@ module SDL.Font
 
   -- * Loading fonts
   , Font(..)
+  , PointSize
   , load
   , decode
   , free
