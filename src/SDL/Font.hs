@@ -64,23 +64,26 @@ module SDL.Font
   , descent
   , lineSkip
   , isMonospace
+  , familyName
+  , styleName
   ) where
 
 import Control.Monad          (unless)
 import Control.Monad.IO.Class (MonadIO, liftIO)
 import Data.Bits              ((.&.), (.|.))
 import Data.ByteString        (ByteString)
-import Data.ByteString.Unsafe (unsafeUseAsCStringLen)
+import Data.ByteString.Unsafe (unsafeUseAsCStringLen, unsafePackCString)
 import Data.Data              (Data)
 import Data.Text              (Text)
+import Data.Text.Encoding     (decodeUtf8)
 import Data.Text.Foreign      (lengthWord16, unsafeCopyToPtr)
 import Data.Typeable          (Typeable)
 import Data.Word              (Word8, Word16)
-import Foreign.C.String       (withCString)
+import Foreign.C.String       (CString, withCString)
 import Foreign.C.Types        (CUShort, CInt)
 import Foreign.Marshal.Alloc  (allocaBytes)
 import Foreign.Marshal.Utils  (with, fromBool, toBool)
-import Foreign.Ptr            (Ptr, castPtr)
+import Foreign.Ptr            (Ptr, castPtr, nullPtr)
 import Foreign.Storable       (peek, pokeByteOff)
 import GHC.Generics           (Generic)
 import Linear                 (V4(..))
@@ -328,3 +331,22 @@ lineSkip = fmap fromIntegral . SDL.Raw.Font.fontLineSkip . unwrap
 -- | Tests whether the current face of a 'Font' is a fixed width font or not.
 isMonospace :: MonadIO m => Font -> m Bool
 isMonospace = fmap toBool . SDL.Raw.Font.fontFaceIsFixedWidth . unwrap
+
+cStringToText :: MonadIO m => CString -> m Text
+cStringToText = fmap decodeUtf8 . liftIO . unsafePackCString
+
+-- | Gets the current font face family name, if any.
+familyName :: MonadIO m => Font -> m (Maybe Text)
+familyName (Font font) = do
+  cstr <- SDL.Raw.Font.fontFaceFamilyName font
+  case cstr == nullPtr of
+    True  -> return Nothing
+    False -> fmap Just $ cStringToText cstr
+
+-- | Gets the current font face style name, if any.
+styleName :: MonadIO m => Font -> m (Maybe Text)
+styleName (Font font) = do
+  cstr <- SDL.Raw.Font.fontFaceStyleName font
+  case cstr == nullPtr of
+    True  -> return Nothing
+    False -> fmap Just $ cStringToText cstr

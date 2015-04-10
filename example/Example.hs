@@ -85,6 +85,8 @@ examples = [
       bytes <- readFile path
       font <- SDL.Font.decode bytes 40
       text <- SDL.Font.blended font gray "Decoded~~~!"
+      print =<< SDL.Font.styleName font
+      print =<< SDL.Font.familyName font
       SDL.Font.free font
       screen <- SDL.getWindowSurface window
       SDL.blitSurface text Nothing screen Nothing
