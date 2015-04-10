@@ -82,3 +82,42 @@ load path size = do
 -- | Frees a loaded 'Font'.
 freeFont :: MonadIO m => Font -> m ()
 freeFont = SDL.Raw.Font.closeFont . fontPtr
+
+type Color = V4 Word8
+
+-- FIXME: The following functions make sure to append a terminating \0 to all
+-- copies of a Text they make. Is this necessary?
+
+renderSolid :: MonadIO m => Font -> Color -> Text -> m SDL.Surface
+renderSolid (Font font) (V4 r g b a) text =
+  let bytelen = 2*(lengthWord16 text + 1) in
+  fmap SDL.Surface .
+    throwIfNull "SDL.Font.render" "TTF_RenderUNICODE_Solid" .
+      liftIO . allocaBytes bytelen $ \textPtr -> do
+        unsafeCopyToPtr text textPtr
+        pokeByteOff textPtr (bytelen - 2) (0 :: CUShort)
+        with (SDL.Raw.Color r g b a) $ \colorPtr ->
+          SDL.Raw.Font.renderUNICODE_Solid font (castPtr textPtr) colorPtr
+
+renderShaded :: MonadIO m => Font -> Color -> Color -> Text -> m SDL.Surface
+renderShaded (Font font) (V4 r g b a) (V4 r2 g2 b2 a2) text =
+  let bytelen = 2*(lengthWord16 text + 1) in
+  fmap SDL.Surface .
+    throwIfNull "SDL.Font.render" "TTF_RenderUNICODE_Solid" .
+      liftIO . allocaBytes bytelen $ \textPtr -> do
+        unsafeCopyToPtr text textPtr
+        pokeByteOff textPtr (bytelen - 2) (0 :: CUShort)
+        with (SDL.Raw.Color r g b a) $ \fgPtr ->
+          with (SDL.Raw.Color r2 g2 b2 a2) $ \bgPtr ->
+            SDL.Raw.Font.renderUNICODE_Shaded font (castPtr textPtr) fgPtr bgPtr
+
+renderBlended :: MonadIO m => Font -> Color -> Text -> m SDL.Surface
+renderBlended (Font font) (V4 r g b a) text =
+  let bytelen = 2*(lengthWord16 text + 1) in
+  fmap SDL.Surface .
+    throwIfNull "SDL.Font.render" "TTF_RenderUNICODE_Blended" .
+      liftIO . allocaBytes bytelen $ \textPtr -> do
+        unsafeCopyToPtr text textPtr
+        pokeByteOff textPtr (bytelen - 2) (0 :: CUShort)
+        with (SDL.Raw.Color r g b a) $ \colorPtr ->
+          SDL.Raw.Font.renderUNICODE_Blended font (castPtr textPtr) colorPtr
