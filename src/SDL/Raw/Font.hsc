@@ -7,7 +7,7 @@ License     : MIT
 Maintainer  : sinisa@bidin.cc
 Stability   : experimental
 
-Low-level bindings to the SDL_ttf library. No error-handling is done here.
+Low-level bindings to the @SDL_ttf@ library. No error-handling is done here.
 For more information about specific function behaviour, see the @SDL_ttf@
 documentation.
 
@@ -130,7 +130,7 @@ type FontPath = CString
 -- | Point size (based on 72DPI). Translates to pixel height.
 type PointSize = CInt
 
--- | The raw, underlying TTF_Font struct.
+-- | The raw, underlying @TTF_Font@ struct.
 data Font
 
 foreign import ccall "SDL_ttf.h TTF_OpenFont"
