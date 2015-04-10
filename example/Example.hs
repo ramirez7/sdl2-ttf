@@ -4,10 +4,11 @@
 module Main where
 
 import Control.Concurrent (threadDelay)
+import Data.ByteString    (readFile)
 import Data.Text          (Text)
 import Data.Text.IO       (putStrLn)
 import Linear             (V4(..))
-import Prelude     hiding (putStrLn)
+import Prelude     hiding (putStrLn, readFile)
 import System.Environment (getArgs)
 import System.Exit        (exitFailure)
 
@@ -52,7 +53,19 @@ examples = [
       screen <- SDL.getWindowSurface window
       SDL.blitSurface text Nothing screen Nothing
       SDL.freeSurface text
+      SDL.updateWindowSurface window),
+
+  ("Decoding from bytestring",
+    \window path -> do
+      bytes <- readFile path
+      font <- SDL.Font.decode bytes 40
+      text <- SDL.Font.blended font gray "Decoded!"
+      SDL.Font.free font
+      screen <- SDL.getWindowSurface window
+      SDL.blitSurface text Nothing screen Nothing
+      SDL.freeSurface text
       SDL.updateWindowSurface window)
+
   ]
 
 main :: IO ()
