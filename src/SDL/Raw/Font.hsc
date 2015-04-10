@@ -1,3 +1,5 @@
+{-# LANGUAGE PatternSynonyms #-}
+
 module SDL.Raw.Font where
 
 import Control.Monad.IO.Class (MonadIO, liftIO)
@@ -353,3 +355,16 @@ foreign import ccall "SDL_ttf.h TTF_RenderGlyph_Blended"
 renderGlyph_Blended
   :: MonadIO m => Ptr Font -> CUShort -> Ptr Color -> m (Ptr Surface)
 renderGlyph_Blended font text fg = liftIO $ renderGlyph_Blended' font text fg
+
+#include "SDL_ttf.h"
+
+pattern TTF_HINTING_LIGHT       = #{const TTF_HINTING_LIGHT}
+pattern TTF_HINTING_MONO        = #{const TTF_HINTING_MONO}
+pattern TTF_HINTING_NONE        = #{const TTF_HINTING_NONE}
+pattern TTF_HINTING_NORMAL      = #{const TTF_HINTING_NORMAL}
+pattern TTF_STYLE_BOLD          = #{const TTF_STYLE_BOLD}
+pattern TTF_STYLE_ITALIC        = #{const TTF_STYLE_ITALIC}
+pattern TTF_STYLE_NORMAL        = #{const TTF_STYLE_NORMAL}
+pattern TTF_STYLE_STRIKETHROUGH = #{const TTF_STYLE_STRIKETHROUGH}
+pattern UNICODE_BOM_NATIVE      = #{const UNICODE_BOM_NATIVE}
+pattern UNICODE_BOM_SWAPPED     = #{const UNICODE_BOM_SWAPPED}
