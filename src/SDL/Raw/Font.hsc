@@ -350,7 +350,7 @@ sizeUNICODE
   :: MonadIO m => Ptr Font -> Ptr CUShort -> Ptr CInt -> Ptr CInt -> m CInt
 sizeUNICODE font text w h = liftIO $ sizeUNICODE' font text w h
 
-foreign import ccall "SDL_ttf.h TTF_RenderText_Solid"
+foreign import ccall "SDL_ttf.h TTF_RenderText_Solid_p"
   renderText_Solid' :: Ptr Font -> CString -> Ptr Color -> IO (Ptr Surface)
 
 {-# INLINE renderText_Solid #-}
@@ -358,7 +358,7 @@ renderText_Solid
   :: MonadIO m => Ptr Font -> CString -> Ptr Color -> m (Ptr Surface)
 renderText_Solid font text fg = liftIO $ renderText_Solid' font text fg
 
-foreign import ccall "SDL_ttf.h TTF_RenderUTF8_Solid"
+foreign import ccall "SDL_ttf.h TTF_RenderUTF8_Solid_p"
   renderUTF8_Solid' :: Ptr Font -> CString -> Ptr Color -> IO (Ptr Surface)
 
 {-# INLINE renderUTF8_Solid #-}
@@ -366,7 +366,7 @@ renderUTF8_Solid
   :: MonadIO m => Ptr Font -> CString -> Ptr Color -> m (Ptr Surface)
 renderUTF8_Solid font text fg = liftIO $ renderUTF8_Solid' font text fg
 
-foreign import ccall "SDL_ttf.h TTF_RenderUNICODE_Solid"
+foreign import ccall "SDL_ttf.h TTF_RenderUNICODE_Solid_p"
   renderUNICODE_Solid'
     :: Ptr Font -> Ptr CUShort -> Ptr Color -> IO (Ptr Surface)
 
@@ -375,7 +375,7 @@ renderUNICODE_Solid
   :: MonadIO m => Ptr Font -> Ptr CUShort -> Ptr Color -> m (Ptr Surface)
 renderUNICODE_Solid font text fg = liftIO $ renderUNICODE_Solid' font text fg
 
-foreign import ccall "SDL_ttf.h TTF_RenderGlyph_Solid"
+foreign import ccall "SDL_ttf.h TTF_RenderGlyph_Solid_p"
   renderGlyph_Solid' :: Ptr Font -> CUShort -> Ptr Color -> IO (Ptr Surface)
 
 {-# INLINE renderGlyph_Solid #-}
@@ -383,7 +383,7 @@ renderGlyph_Solid
   :: MonadIO m => Ptr Font -> CUShort -> Ptr Color -> m (Ptr Surface)
 renderGlyph_Solid font text fg = liftIO $ renderGlyph_Solid' font text fg
 
-foreign import ccall "SDL_ttf.h TTF_RenderText_Shaded"
+foreign import ccall "SDL_ttf.h TTF_RenderText_Shaded_p"
   renderText_Shaded'
     :: Ptr Font -> CString -> Ptr Color -> Ptr Color -> IO (Ptr Surface)
 
@@ -393,7 +393,7 @@ renderText_Shaded
      Ptr Font -> CString -> Ptr Color -> Ptr Color -> m (Ptr Surface)
 renderText_Shaded font text fg bg = liftIO $ renderText_Shaded' font text fg bg
 
-foreign import ccall "SDL_ttf.h TTF_RenderUTF8_Shaded"
+foreign import ccall "SDL_ttf.h TTF_RenderUTF8_Shaded_p"
   renderUTF8_Shaded'
     :: Ptr Font -> CString -> Ptr Color -> Ptr Color -> IO (Ptr Surface)
 
@@ -403,7 +403,7 @@ renderUTF8_Shaded
      Ptr Font -> CString -> Ptr Color -> Ptr Color -> m (Ptr Surface)
 renderUTF8_Shaded font text fg bg = liftIO $ renderUTF8_Shaded' font text fg bg
 
-foreign import ccall "SDL_ttf.h TTF_RenderUNICODE_Shaded"
+foreign import ccall "SDL_ttf.h TTF_RenderUNICODE_Shaded_p"
   renderUNICODE_Shaded'
     :: Ptr Font -> Ptr CUShort -> Ptr Color -> Ptr Color -> IO (Ptr Surface)
 
@@ -414,7 +414,7 @@ renderUNICODE_Shaded
 renderUNICODE_Shaded font text fg bg =
   liftIO $ renderUNICODE_Shaded' font text fg bg
 
-foreign import ccall "SDL_ttf.h TTF_RenderGlyph_Shaded"
+foreign import ccall "SDL_ttf.h TTF_RenderGlyph_Shaded_p"
   renderGlyph_Shaded'
     :: Ptr Font -> CUShort -> Ptr Color -> Ptr Color -> IO (Ptr Surface)
 
@@ -425,7 +425,7 @@ renderGlyph_Shaded
 renderGlyph_Shaded font text fg bg =
   liftIO $ renderGlyph_Shaded' font text fg bg
 
-foreign import ccall "SDL_ttf.h TTF_RenderText_Blended"
+foreign import ccall "SDL_ttf.h TTF_RenderText_Blended_p"
   renderText_Blended' :: Ptr Font -> CString -> Ptr Color -> IO (Ptr Surface)
 
 {-# INLINE renderText_Blended #-}
@@ -433,7 +433,7 @@ renderText_Blended
   :: MonadIO m => Ptr Font -> CString -> Ptr Color -> m (Ptr Surface)
 renderText_Blended font text fg = liftIO $ renderText_Blended' font text fg
 
-foreign import ccall "SDL_ttf.h TTF_RenderUTF8_Blended"
+foreign import ccall "SDL_ttf.h TTF_RenderUTF8_Blended_p"
   renderUTF8_Blended' :: Ptr Font -> CString -> Ptr Color -> IO (Ptr Surface)
 
 {-# INLINE renderUTF8_Blended #-}
@@ -441,7 +441,7 @@ renderUTF8_Blended
   :: MonadIO m => Ptr Font -> CString -> Ptr Color -> m (Ptr Surface)
 renderUTF8_Blended font text fg = liftIO $ renderUTF8_Blended' font text fg
 
-foreign import ccall "SDL_ttf.h TTF_RenderUNICODE_Blended"
+foreign import ccall "SDL_ttf.h TTF_RenderUNICODE_Blended_p"
   renderUNICODE_Blended'
     :: Ptr Font -> Ptr CUShort -> Ptr Color -> IO (Ptr Surface)
 
@@ -451,7 +451,7 @@ renderUNICODE_Blended
 renderUNICODE_Blended font text fg =
   liftIO $ renderUNICODE_Blended' font text fg
 
-foreign import ccall "SDL_ttf.h TTF_RenderGlyph_Blended"
+foreign import ccall "SDL_ttf.h TTF_RenderGlyph_Blended_p"
   renderGlyph_Blended' :: Ptr Font -> CUShort -> Ptr Color -> IO (Ptr Surface)
 
 {-# INLINE renderGlyph_Blended #-}
