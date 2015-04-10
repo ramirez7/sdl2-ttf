@@ -1,4 +1,4 @@
-# sdl2-image
+# sdl2-ttf
 
 #### Haskell bindings to SDL_ttf, both high and low-level.
 
