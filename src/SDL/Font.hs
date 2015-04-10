@@ -11,7 +11,10 @@ High-level bindings to the @SDL_ttf@ library.
 
 -}
 
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE DeriveDataTypeable #-}
+{-# LANGUAGE DeriveGeneric      #-}
+{-# LANGUAGE LambdaCase         #-}
+{-# LANGUAGE OverloadedStrings  #-}
 
 module SDL.Font
   (
@@ -42,23 +45,30 @@ module SDL.Font
   , solid
   , shaded
   , blended
+
+  -- * Font attributes
+  , Style(..)
+  , getStyle
+  , setStyle
   ) where
 
 import Control.Monad          (unless)
 import Control.Monad.IO.Class (MonadIO, liftIO)
+import Data.Bits              ((.&.), (.|.))
 import Data.ByteString        (ByteString)
 import Data.ByteString.Unsafe (unsafeUseAsCStringLen)
+import Data.Data              (Data)
 import Data.Text              (Text)
 import Data.Text.Foreign      (lengthWord16, unsafeCopyToPtr)
 import Data.Typeable          (Typeable)
 import Data.Word              (Word8, Word16)
 import Foreign.C.String       (withCString)
-import Foreign.C.Types        (CUShort)
+import Foreign.C.Types        (CUShort, CInt)
 import Foreign.Marshal.Alloc  (allocaBytes)
 import Foreign.Marshal.Utils  (with)
 import Foreign.Ptr            (Ptr, castPtr)
 import Foreign.Storable       (peek, pokeByteOff)
--- import GHC.Generics           (Generic)
+import GHC.Generics           (Generic)
 import Linear                 (V4(..))
 import SDL                    (Surface(..))
 import SDL.Exception          (throwIfNull, throwIfNeg_)
@@ -190,3 +200,43 @@ withText text act =
     act ptr
   where
     len = 2*(lengthWord16 text + 1)
+
+-- Helper function for converting a bitmask into a list of values.
+fromMaskWith :: (Enum a, Bounded a) => (a -> CInt) -> CInt -> [a]
+fromMaskWith convert cint = concatMap (\a -> find (a, convert a)) $ [minBound..]
+  where
+    find (a, i) = if i == i .&. cint then [a] else []
+
+-- Helper function for converting a list of values into a bitmask.
+toMaskWith :: (a -> CInt) -> [a] -> CInt
+toMaskWith convert = foldr (.|.) 0 . map convert
+
+-- | Possible styles that can be applied to a 'Font'.
+data Style
+  = Normal
+  | Bold
+  | Italic
+  | Underline
+  | Strikethrough
+  deriving (Eq, Enum, Ord, Bounded, Data, Generic, Typeable, Read, Show)
+
+styleToCInt :: Style -> CInt
+styleToCInt =
+  \case
+    Normal        -> SDL.Raw.Font.TTF_STYLE_NORMAL
+    Bold          -> SDL.Raw.Font.TTF_STYLE_BOLD
+    Italic        -> SDL.Raw.Font.TTF_STYLE_ITALIC
+    Underline     -> SDL.Raw.Font.TTF_STYLE_UNDERLINE
+    Strikethrough -> SDL.Raw.Font.TTF_STYLE_STRIKETHROUGH
+
+-- | Gets the rendering style of a given font. If none was ever set, this
+-- will be a list containing only 'Normal'.
+getStyle :: MonadIO m => Font -> m [Style]
+getStyle (Font font) = do
+  cint <- SDL.Raw.Font.getFontStyle font
+  return $ fromMaskWith styleToCInt cint
+
+-- | Sets the rendering style of a font. If none is given, the default of
+-- 'Normal' will be used.
+setStyle :: MonadIO m => Font -> [Style] -> m ()
+setStyle (Font font) = SDL.Raw.Font.setFontStyle font . toMaskWith styleToCInt
