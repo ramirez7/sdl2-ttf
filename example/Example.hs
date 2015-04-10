@@ -15,20 +15,45 @@ import qualified SDL
 import qualified SDL.Font
 
 red :: SDL.Font.Color
-red = V4 maxBound minBound minBound maxBound
+red = V4 255 0 0 0
+
+gray :: SDL.Font.Color
+gray = V4 128 128 128 255
 
 -- A sequence of example actions to be perfomed and displayed.
 examples :: [(Text, SDL.Window -> FilePath -> IO ())]
 examples = [
-  ("Loading font, blitting some text",
+
+  ("Blitting solid",
     \window path -> do
-      font   <- SDL.Font.load path 70
-      text   <- SDL.Font.blended font red "Why hello there!"
+      font <- SDL.Font.load path 70
+      text <- SDL.Font.solid font red "Solid!"
       SDL.Font.free font
       screen <- SDL.getWindowSurface window
       SDL.blitSurface text Nothing screen Nothing
       SDL.freeSurface text
-      SDL.updateWindowSurface window)]
+      SDL.updateWindowSurface window),
+
+  ("Blitting shaded",
+    \window path -> do
+      font <- SDL.Font.load path 70
+      text <- SDL.Font.shaded font red gray "Shaded!"
+      SDL.Font.free font
+      screen <- SDL.getWindowSurface window
+      SDL.blitSurface text Nothing screen Nothing
+      SDL.freeSurface text
+      SDL.updateWindowSurface window),
+
+  ("Blitting blended",
+    \window path -> do
+      font <- SDL.Font.load path 70
+      text <- SDL.Font.blended font red "Blended!"
+      SDL.Font.free font
+      screen <- SDL.getWindowSurface window
+      SDL.blitSurface text Nothing screen Nothing
+      SDL.freeSurface text
+      SDL.updateWindowSurface window)
+  ]
 
 main :: IO ()
 main = do
