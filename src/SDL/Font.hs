@@ -90,8 +90,6 @@ import Linear                 (V4(..))
 import SDL                    (Surface(..))
 import SDL.Exception          (throwIfNull, throwIfNeg_)
 import SDL.Raw.Filesystem     (rwFromConstMem)
--- import SDL.Raw.Types          (RWops)
--- import System.IO.Unsafe       (unsafePerformIO)
 
 import qualified SDL.Raw
 import qualified SDL.Raw.Font
