@@ -28,6 +28,5 @@ or feel that something is missing or should be added.
 
 High-level bindings to:
 
-* All `OpenFont` functions except the most basic one.
 * All functions from `3.3 Attributes`.
 * Rendering latin1 strings and individual glyphs.
