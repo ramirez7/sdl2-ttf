@@ -53,6 +53,9 @@ module SDL.Font
   , Outline
   , getOutline
   , setOutline
+  , Hinting(..)
+  , getHinting
+  , setHinting
   ) where
 
 import Control.Monad          (unless)
@@ -230,24 +233,57 @@ styleToCInt =
     Underline     -> SDL.Raw.Font.TTF_STYLE_UNDERLINE
     Strikethrough -> SDL.Raw.Font.TTF_STYLE_STRIKETHROUGH
 
--- | Gets the rendering styles of a given font. If none were ever set, this
+-- | Gets the rendering styles of a given 'Font'. If none were ever set, this
 -- will be an empty list.
 getStyle :: MonadIO m => Font -> m [Style]
 getStyle (Font font) = do
   cint <- SDL.Raw.Font.getFontStyle font
   return $ fromMaskWith styleToCInt cint
 
--- | Sets the rendering styles of a font. Use an empty list to reset the style.
+-- | Sets the rendering style of a 'Font'. Use an empty list to reset the style.
 setStyle :: MonadIO m => Font -> [Style] -> m ()
 setStyle (Font font) = SDL.Raw.Font.setFontStyle font . toMaskWith styleToCInt
 
--- | The size of the font outline, in pixels. Use 0 to turn off outlining.
+-- | The size of the 'Font' outline, in pixels. Use 0 to turn off outlining.
 type Outline = Int
 
--- | Gets the current outline size of a given font.
+-- | Gets the current outline size of a given 'Font'.
 getOutline :: MonadIO m => Font -> m Outline
 getOutline (Font font) = fromIntegral `fmap` SDL.Raw.Font.getFontOutline font
 
--- | Sets the outline size for a given font. Use 0 to turn off outlining.
+-- | Sets the outline size for a given 'Font'. Use 0 to turn off outlining.
 setOutline :: MonadIO m => Font -> Outline -> m ()
 setOutline (Font font) = SDL.Raw.Font.setFontOutline font . fromIntegral
+
+-- | The hinting setting of a 'Font'.
+data Hinting
+  = Normal
+  | Light
+  | Mono
+  | None
+  deriving (Eq, Enum, Ord, Bounded, Data, Generic, Typeable, Read, Show)
+
+hintingToCInt :: Hinting -> CInt
+hintingToCInt =
+  \case
+    Normal -> SDL.Raw.Font.TTF_HINTING_NORMAL
+    Light  -> SDL.Raw.Font.TTF_HINTING_LIGHT
+    Mono   -> SDL.Raw.Font.TTF_HINTING_MONO
+    None   -> SDL.Raw.Font.TTF_HINTING_NONE
+
+cIntToHinting :: CInt -> Hinting
+cIntToHinting =
+  \case
+    SDL.Raw.Font.TTF_HINTING_NORMAL -> Normal
+    SDL.Raw.Font.TTF_HINTING_LIGHT  -> Light
+    SDL.Raw.Font.TTF_HINTING_MONO   -> Mono
+    SDL.Raw.Font.TTF_HINTING_NONE   -> None
+    _ -> error "SDL.Font.cIntToHinting received unknown TTF_HINTING."
+
+-- | Gets the hinting setting of a given 'Font'.
+getHinting :: MonadIO m => Font -> m Hinting
+getHinting (Font font) = cIntToHinting `fmap` SDL.Raw.Font.getFontHinting font
+
+-- | Sets the rendering styles of a font. Use an empty list to reset the style.
+setHinting :: MonadIO m => Font -> Hinting -> m ()
+setHinting (Font font) = SDL.Raw.Font.setFontHinting font . hintingToCInt
