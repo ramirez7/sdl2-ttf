@@ -55,11 +55,24 @@ examples = [
       SDL.freeSurface text
       SDL.updateWindowSurface window),
 
+  ("Blitting styled",
+    \window path -> do
+      font <- SDL.Font.load path 65
+      let styles = [SDL.Font.Bold, SDL.Font.Underline, SDL.Font.Italic]
+      SDL.Font.setStyle font styles
+      print =<< SDL.Font.getStyle font
+      text <- SDL.Font.blended font red "Styled!"
+      SDL.Font.free font
+      screen <- SDL.getWindowSurface window
+      SDL.blitSurface text Nothing screen Nothing
+      SDL.freeSurface text
+      SDL.updateWindowSurface window),
+
   ("Decoding from bytestring",
     \window path -> do
       bytes <- readFile path
       font <- SDL.Font.decode bytes 40
-      text <- SDL.Font.blended font gray "Decoded!"
+      text <- SDL.Font.blended font gray "Decoded~~~!"
       SDL.Font.free font
       screen <- SDL.getWindowSurface window
       SDL.blitSurface text Nothing screen Nothing
