@@ -1,15 +1,13 @@
 {-|
 
 Module      : SDL.Raw.Font
-Description : Low-level bindings.
 Copyright   : (c) 2015 Siniša Biđin
 License     : MIT
 Maintainer  : sinisa@bidin.cc
 Stability   : experimental
 
-Low-level bindings to the @SDL_ttf@ library. No error-handling is done here.
-For more information about specific function behaviour, see the @SDL_ttf@
-documentation.
+Raw bindings to the @SDL_ttf@ library. No error-handling is done here. For more
+information about specific function behaviour, see the @SDL_ttf@ documentation.
 
 -}
 

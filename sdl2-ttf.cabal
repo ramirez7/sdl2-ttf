@@ -1,7 +1,7 @@
 name:          sdl2-ttf
 version:       0.1
 synopsis:      Bindings to SDL_ttf.
-description:   Both high and low-level Haskell bindings to SDL_ttf.
+description:   Haskell bindings to SDL_ttf.
 license:       MIT
 license-file:  LICENSE
 author:        Siniša Biđin
