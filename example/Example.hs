@@ -84,7 +84,11 @@ examples = [
     \window path -> do
       bytes <- readFile path
       font <- SDL.Font.decode bytes 40
-      text <- SDL.Font.blended font gray "Decoded~~~!"
+      let chars = "Decoded~~~!"
+      putStrLn "How big will the surface be?"
+      print =<< SDL.Font.size font chars
+      text <- SDL.Font.blended font gray chars
+      putStrLn "Style and family names?"
       print =<< SDL.Font.styleName font
       print =<< SDL.Font.familyName font
       SDL.Font.free font
