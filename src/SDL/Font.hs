@@ -23,7 +23,7 @@ module SDL.Font
   , version
   , quit
 
-  -- * Loading fonts
+  -- * Loading
   --
   -- | Use the following actions to load @TTF@ and @FON@ file formats.
   , Font(..)
@@ -35,7 +35,7 @@ module SDL.Font
   , decodeIndex
   , free
 
-  -- * Rendering text
+  -- * Rendering
   --
   -- | Use the following actions to render text to a 'Surface'. The differing
   -- methods available are described in more detail in the original @SDL_ttf@
@@ -46,7 +46,7 @@ module SDL.Font
   , shaded
   , blended
 
-  -- * Font attributes
+  -- * Attributes
   , Style(..)
   , getStyle
   , setStyle
@@ -59,16 +59,19 @@ module SDL.Font
   , Kerning
   , getKerning
   , setKerning
+  , isMonospace
+  , familyName
+  , styleName
+
+  -- * Dimensions
   , height
   , ascent
   , descent
   , lineSkip
-  , isMonospace
-  , familyName
-  , styleName
   , glyphProvided
   , glyphIndex
   , glyphMetrics
+  , size
   ) where
 
 import Control.Exception      (throwIO)
@@ -405,3 +408,23 @@ glyphMetrics (Font font) ch =
 throwFailed :: MonadIO m => Text -> Text -> m a
 throwFailed caller rawfunc =
   liftIO $ throwIO =<< SDLCallFailed caller rawfunc <$> getError
+
+-- | Use the following to discover how tall and wide a 'Surface' needs to be
+-- in order to accommodate a given text when it is rendered. Note that no
+-- actual rendering takes place. The height returned is the same one returned
+-- by 'height'. This function does not support multiline text and will throw an
+-- exception in case of error, such as a glyph in the string not being found.
+-- The values returned are the width and height, respectively, in pixels.
+size :: MonadIO m => Font -> Text -> m (Int, Int)
+size (Font font) text =
+    liftIO .
+      withText text $ \ptr ->
+        alloca $ \w ->
+          alloca $ \h ->
+            SDL.Raw.Font.sizeUNICODE font (castPtr ptr) w h
+              >>= \case
+                0 -> do
+                  w' <- fmap fromIntegral $ peek w
+                  h' <- fmap fromIntegral $ peek h
+                  return (w', h')
+                _ -> throwFailed "SDL.Font.size" "TTF_SizeUNICODE"
