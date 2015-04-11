@@ -45,6 +45,7 @@ module SDL.Font
   , solid
   , shaded
   , blended
+  , size
 
   -- * Attributes
   , Style(..)
@@ -62,16 +63,17 @@ module SDL.Font
   , isMonospace
   , familyName
   , styleName
-
-  -- * Dimensions
   , height
   , ascent
   , descent
   , lineSkip
+
+  -- * Glyphs
+  --
+  -- | Functions that work with individual glyphs.
   , glyphProvided
   , glyphIndex
   , glyphMetrics
-  , size
   ) where
 
 import Control.Exception      (throwIO)
@@ -409,7 +411,7 @@ throwFailed :: MonadIO m => Text -> Text -> m a
 throwFailed caller rawfunc =
   liftIO $ throwIO =<< SDLCallFailed caller rawfunc <$> getError
 
--- | Use the following to discover how tall and wide a 'Surface' needs to be
+-- | Use this function to discover how wide and tall a 'Surface' needs to be
 -- in order to accommodate a given text when it is rendered. Note that no
 -- actual rendering takes place. The height returned is the same one returned
 -- by 'height'. This function does not support multiline text and will throw an
