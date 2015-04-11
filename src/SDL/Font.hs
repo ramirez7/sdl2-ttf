@@ -68,6 +68,7 @@ module SDL.Font
   , styleName
   , glyphProvided
   , glyphIndex
+  , glyphMetrics
   ) where
 
 import Control.Monad          (unless)
@@ -83,7 +84,7 @@ import Data.Typeable          (Typeable)
 import Data.Word              (Word8, Word16)
 import Foreign.C.String       (CString, withCString)
 import Foreign.C.Types        (CUShort, CInt)
-import Foreign.Marshal.Alloc  (allocaBytes)
+import Foreign.Marshal.Alloc  (allocaBytes, alloca)
 import Foreign.Marshal.Utils  (with, fromBool, toBool)
 import Foreign.Ptr            (Ptr, castPtr, nullPtr)
 import Foreign.Storable       (peek, pokeByteOff)
@@ -367,3 +368,34 @@ glyphIndex (Font font) ch =
     >>= \case
       0 -> return Nothing
       i -> return . Just $ fromIntegral i
+
+-- | Get glyph metrics for a given unicode character. The values returned are:
+--
+--     1. minimum x offset
+--     2. maximum x offset
+--     3. minimum y offset
+--     4. maximum y offset
+--     5. advance offset
+--
+-- You can see more information about these values in the original @SDL_ttf@
+-- documentation
+-- <http://www.libsdl.org/projects/SDL_ttf/docs/SDL_ttf.html#SEC38 here>.
+glyphMetrics :: MonadIO m => Font -> Char -> m (Maybe (Int, Int, Int, Int, Int))
+glyphMetrics (Font font) ch =
+  liftIO .
+    alloca $ \minx ->
+      alloca $ \maxx ->
+        alloca $ \miny ->
+          alloca $ \maxy ->
+            alloca $ \advn -> do
+              let chi = fromIntegral $ fromEnum ch
+              r <- SDL.Raw.Font.glyphMetrics font chi minx maxx miny maxy advn
+              if r /= 0 then
+                return Nothing
+              else do
+                a <- fmap fromIntegral $ peek minx
+                b <- fmap fromIntegral $ peek maxx
+                c <- fmap fromIntegral $ peek miny
+                d <- fmap fromIntegral $ peek maxy
+                e <- fmap fromIntegral $ peek advn
+                return $ Just (a, b, c, d, e)
