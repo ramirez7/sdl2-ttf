@@ -1,5 +1,5 @@
 name:          sdl2-ttf
-version:       0.1
+version:       0.2
 synopsis:      Bindings to SDL_ttf.
 description:   Haskell bindings to SDL_ttf.
 license:       MIT
