@@ -129,20 +129,20 @@ type PointSize = Int
 -- | Given a path to a font file, loads it for use as a 'Font' at a certain
 -- 'PointSize'.
 load :: MonadIO m => FilePath -> PointSize -> m Font
-load path size = do
+load path pts = do
   fmap Font .
     throwIfNull "SDL.Font.load" "TTF_OpenFont" .
       liftIO . withCString path $
-        flip SDL.Raw.Font.openFont $ fromIntegral size
+        flip SDL.Raw.Font.openFont $ fromIntegral pts
 
 -- | Same as 'load', but accepts a 'ByteString' containing a font instead.
 decode :: MonadIO m => ByteString -> PointSize -> m Font
-decode bytes size = liftIO $ do
+decode bytes pts = liftIO $ do
   unsafeUseAsCStringLen bytes $ \(cstr, len) -> do
     rw <- rwFromConstMem (castPtr cstr) (fromIntegral len)
     fmap Font .
       throwIfNull "SDL.Font.decode" "TTF_OpenFontRW" $
-        SDL.Raw.Font.openFont_RW rw 0 $ fromIntegral size
+        SDL.Raw.Font.openFont_RW rw 0 $ fromIntegral pts
 
 -- | Designates a font face, the default and first one being 0.
 type Index = Int
@@ -151,20 +151,20 @@ type Index = Int
 -- the given index) for use as a 'Font' at a certain 'PointSize'. The first
 -- face is always index 0, and is the one chosen by default when using 'load'.
 loadIndex :: MonadIO m => FilePath -> PointSize -> Index -> m Font
-loadIndex path size i = do
+loadIndex path pts i = do
   fmap Font .
     throwIfNull "SDL.Font.loadIndex" "TTF_OpenFontIndex" .
       liftIO . withCString path $ \cpath ->
-        SDL.Raw.Font.openFontIndex cpath (fromIntegral size) (fromIntegral i)
+        SDL.Raw.Font.openFontIndex cpath (fromIntegral pts) (fromIntegral i)
 
 -- | Same as 'loadIndex', but accepts a 'ByteString' containing a font instead.
 decodeIndex :: MonadIO m => ByteString -> PointSize -> Index -> m Font
-decodeIndex bytes size i = liftIO $ do
+decodeIndex bytes pts i = liftIO $ do
   unsafeUseAsCStringLen bytes $ \(cstr, len) -> do
     rw <- rwFromConstMem (castPtr cstr) (fromIntegral len)
     fmap Font .
       throwIfNull "SDL.Font.decodeIndex" "TTF_OpenFontIndexRW" $
-        SDL.Raw.Font.openFontIndex_RW rw 0 (fromIntegral size) (fromIntegral i)
+        SDL.Raw.Font.openFontIndex_RW rw 0 (fromIntegral pts) (fromIntegral i)
 
 -- | Frees a loaded 'Font'.
 free :: MonadIO m => Font -> m ()
