@@ -66,6 +66,8 @@ module SDL.Font
   , isMonospace
   , familyName
   , styleName
+  , glyphProvided
+  , glyphIndex
   ) where
 
 import Control.Monad          (unless)
@@ -349,3 +351,19 @@ styleName :: MonadIO m => Font -> m (Maybe Text)
 styleName (Font font) = do
   cstr <- SDL.Raw.Font.fontFaceStyleName font
   onlyIfM (cstr /= nullPtr) $ cStringToText cstr
+
+-- | Does a 'Font' provide a certain unicode character?
+glyphProvided :: MonadIO m => Font -> Char -> m Bool
+glyphProvided font ch =
+  glyphIndex font ch >>= \case
+    Just  _ -> return True
+    Nothing -> return False
+
+-- | Same as 'glyphProvided', but returns an index of the glyph for the given
+-- character instead, if one is provided.
+glyphIndex :: MonadIO m => Font -> Char -> m (Maybe Int)
+glyphIndex (Font font) ch =
+  SDL.Raw.Font.glyphIsProvided font (fromIntegral $ fromEnum ch)
+    >>= \case
+      0 -> return Nothing
+      i -> return . Just $ fromIntegral i
