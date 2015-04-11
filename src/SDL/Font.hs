@@ -71,6 +71,9 @@ module SDL.Font
   , glyphProvided
   , glyphIndex
   , glyphMetrics
+  , solidGlyph
+  , shadedGlyph
+  , blendedGlyph
   ) where
 
 import Control.Exception      (throwIO)
@@ -363,11 +366,15 @@ glyphProvided font ch =
     Just  _ -> return True
     Nothing -> return False
 
+{-# INLINE fromChar #-}
+fromChar :: Integral a => Char -> a
+fromChar = fromIntegral . fromEnum
+
 -- | Same as 'glyphProvided', but returns an index of the glyph for the given
 -- character instead, if one is provided.
 glyphIndex :: MonadIO m => Font -> Char -> m (Maybe Int)
 glyphIndex (Font font) ch =
-  SDL.Raw.Font.glyphIsProvided font (fromIntegral $ fromEnum ch)
+  SDL.Raw.Font.glyphIsProvided font (fromChar ch)
     >>= \case
       0 -> return Nothing
       i -> return . Just $ fromIntegral i
@@ -391,7 +398,7 @@ glyphMetrics (Font font) ch =
         alloca $ \miny ->
           alloca $ \maxy ->
             alloca $ \advn -> do
-              let chi = fromIntegral $ fromEnum ch
+              let chi = fromChar ch
               r <- SDL.Raw.Font.glyphMetrics font chi minx maxx miny maxy advn
               if r /= 0 then
                 return Nothing
@@ -427,3 +434,31 @@ size (Font font) text =
                   h' <- fmap fromIntegral $ peek h
                   return (w', h')
                 _ -> throwFailed "SDL.Font.size" "TTF_SizeUNICODE"
+
+-- | Same as 'solid', but renders a single glyph instead.
+solidGlyph :: MonadIO m => Font -> Color -> Char -> m SDL.Surface
+solidGlyph (Font font) (V4 r g b a) ch =
+  fmap SDL.Surface .
+    throwIfNull "SDL.Font.solidGlyph" "TTF_RenderGlyph_Solid" .
+      liftIO .
+        with (SDL.Raw.Color r g b a) $ \fg ->
+          SDL.Raw.Font.renderGlyph_Solid font (fromChar ch) fg
+
+-- | Same as 'shaded', but renders a single glyph instead.
+shadedGlyph :: MonadIO m => Font -> Color -> Color -> Char -> m SDL.Surface
+shadedGlyph (Font font) (V4 r g b a) (V4 r2 g2 b2 a2) ch =
+  fmap SDL.Surface .
+    throwIfNull "SDL.Font.shadedGlyph" "TTF_RenderGlyph_Solid" .
+      liftIO .
+        with (SDL.Raw.Color r g b a) $ \fg ->
+          with (SDL.Raw.Color r2 g2 b2 a2) $ \bg ->
+            SDL.Raw.Font.renderGlyph_Shaded font (fromChar ch) fg bg
+
+-- | Same as 'blended', but renders a single glyph instead.
+blendedGlyph :: MonadIO m => Font -> Color -> Char -> m SDL.Surface
+blendedGlyph (Font font) (V4 r g b a) ch =
+  fmap SDL.Surface .
+    throwIfNull "SDL.Font.blendedGlyph" "TTF_RenderGlyph_Blended" .
+      liftIO .
+        with (SDL.Raw.Color r g b a) $ \fg ->
+          SDL.Raw.Font.renderGlyph_Blended font (fromChar ch) fg

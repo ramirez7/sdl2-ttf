@@ -97,6 +97,16 @@ examples = [
       SDL.freeSurface text
       SDL.updateWindowSurface window),
 
+  ("Render a single glyph",
+    \window path -> do
+      font <- SDL.Font.load path 100
+      text <- SDL.Font.blendedGlyph font red 'ŏ'
+      SDL.Font.free font
+      screen <- SDL.getWindowSurface window
+      SDL.blitSurface text Nothing screen Nothing
+      SDL.freeSurface text
+      SDL.updateWindowSurface window),
+
   ("Check existence of weird chars, blit them",
     \window path -> do
       font <- SDL.Font.load path 80
