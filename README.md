@@ -1,6 +1,6 @@
 # sdl2-ttf
 
-#### Haskell bindings to SDL_ttf, both high and low-level.
+#### Haskell bindings to SDL_ttf.
 
 This library depends on and is meant to be used with the `new-api` branch of
 [haskell-game/sdl2](https://github.com/haskell-game/sdl2). Currently you can
@@ -20,13 +20,6 @@ cd sdl2-ttf
 cabal run path/to/some/font.(ttf|fon)
 ```
 
-Both sets of bindings should allow you to use any aspect of the original
-SDL_ttf library. Please report an issue if you encounter a problem/bug
-or feel that something is missing or should be added.
-
-#### Currently missing:
-
-High-level bindings to:
-
-* TTF_Size(Text, UTF8, UNICODE)
-* Rendering latin1 strings and individual glyphs.
+Both sets of bindings (the raw and higher level ones) should allow you to use
+any aspect of the original SDL_ttf library. Please report an issue if you
+encounter a problem/bug or feel that something is missing or should be added.
