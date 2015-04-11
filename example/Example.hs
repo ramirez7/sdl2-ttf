@@ -96,7 +96,7 @@ examples = [
   ("Check existence of weird chars, blit them",
     \window path -> do
       font <- SDL.Font.load path 80
-      let chars = "☃Δ✭"
+      let chars = "☃Δ✭!"
       exist <- mapM (SDL.Font.glyphProvided font) $ unpack chars
       print $ zip (unpack chars) exist
       text <- SDL.Font.blended font red chars
