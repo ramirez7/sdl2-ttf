@@ -183,7 +183,7 @@ type Color = V4 Word8
 solid :: MonadIO m => Font -> Color -> Text -> m SDL.Surface
 solid (Font font) (V4 r g b a) text =
   fmap SDL.Surface .
-    throwIfNull "SDL.Font.render" "TTF_RenderUNICODE_Solid" .
+    throwIfNull "SDL.Font.solid" "TTF_RenderUNICODE_Solid" .
       liftIO . withText text $ \ptr ->
         with (SDL.Raw.Color r g b a) $ \fg ->
           SDL.Raw.Font.renderUNICODE_Solid font (castPtr ptr) fg
@@ -195,7 +195,7 @@ solid (Font font) (V4 r g b a) text =
 shaded :: MonadIO m => Font -> Color -> Color -> Text -> m SDL.Surface
 shaded (Font font) (V4 r g b a) (V4 r2 g2 b2 a2) text =
   fmap SDL.Surface .
-    throwIfNull "SDL.Font.render" "TTF_RenderUNICODE_Solid" .
+    throwIfNull "SDL.Font.shaded" "TTF_RenderUNICODE_Shaded" .
       liftIO . withText text $ \ptr -> do
         with (SDL.Raw.Color r g b a) $ \fg ->
           with (SDL.Raw.Color r2 g2 b2 a2) $ \bg ->
@@ -209,7 +209,7 @@ shaded (Font font) (V4 r g b a) (V4 r2 g2 b2 a2) text =
 blended :: MonadIO m => Font -> Color -> Text -> m SDL.Surface
 blended (Font font) (V4 r g b a) text =
   fmap SDL.Surface .
-    throwIfNull "SDL.Font.render" "TTF_RenderUNICODE_Blended" .
+    throwIfNull "SDL.Font.blended" "TTF_RenderUNICODE_Blended" .
       liftIO . withText text $ \ptr -> do
         with (SDL.Raw.Color r g b a) $ \fg ->
           SDL.Raw.Font.renderUNICODE_Blended font (castPtr ptr) fg
