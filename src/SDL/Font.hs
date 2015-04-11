@@ -6,6 +6,12 @@ License     : MIT
 Maintainer  : sinisa@bidin.cc
 Stability   : experimental
 
+Bindings to the @SDL_ttf@ library. These should allow you to load fonts and
+render 'Text' in various styles to an @SDL@ 'Surface'.
+
+You can safely assume that any monadic action listed here is capable of
+throwing an 'SDLException' in case it encounters an error.
+
 -}
 
 {-# LANGUAGE DeriveDataTypeable #-}
@@ -418,9 +424,8 @@ throwFailed caller rawfunc =
 -- | Use this function to discover how wide and tall a 'Surface' needs to be
 -- in order to accommodate a given text when it is rendered. Note that no
 -- actual rendering takes place. The height returned is the same one returned
--- by 'height'. This function does not support multiline text and will throw an
--- exception in case of error, such as a glyph in the string not being found.
--- The values returned are the width and height, respectively, in pixels.
+-- by 'height'. This function does not support multiline text. The values
+-- returned are the width and height, respectively, in pixels.
 size :: MonadIO m => Font -> Text -> m (Int, Int)
 size (Font font) text =
     liftIO .
