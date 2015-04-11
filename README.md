@@ -28,6 +28,5 @@ or feel that something is missing or should be added.
 
 High-level bindings to:
 
-* GlyphIsProvided, GlyphMetrics
 * TTF_Size(Text, UTF8, UNICODE)
 * Rendering latin1 strings and individual glyphs.
