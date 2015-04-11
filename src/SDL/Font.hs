@@ -71,6 +71,7 @@ module SDL.Font
   , glyphMetrics
   ) where
 
+import Control.Exception      (throwIO)
 import Control.Monad          (unless)
 import Control.Monad.IO.Class (MonadIO, liftIO)
 import Data.Bits              ((.&.), (.|.))
@@ -91,7 +92,7 @@ import Foreign.Storable       (peek, pokeByteOff)
 import GHC.Generics           (Generic)
 import Linear                 (V4(..))
 import SDL                    (Surface(..))
-import SDL.Exception          (throwIfNull, throwIfNeg_)
+import SDL.Exception          (SDLException(..), throwIfNull, throwIfNeg_, getError)
 import SDL.Raw.Filesystem     (rwFromConstMem)
 
 import qualified SDL.Raw
@@ -399,3 +400,8 @@ glyphMetrics (Font font) ch =
                 d <- fmap fromIntegral $ peek maxy
                 e <- fmap fromIntegral $ peek advn
                 return $ Just (a, b, c, d, e)
+
+-- Allows us to just throw an SDL exception directly.
+throwFailed :: MonadIO m => Text -> Text -> m a
+throwFailed caller rawfunc =
+  liftIO $ throwIO =<< SDLCallFailed caller rawfunc <$> getError
