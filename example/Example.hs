@@ -5,7 +5,7 @@ module Main where
 
 import Control.Concurrent (threadDelay)
 import Data.ByteString    (readFile)
-import Data.Text          (Text)
+import Data.Text          (Text, unpack)
 import Data.Text.IO       (putStrLn)
 import Linear             (V4(..))
 import Prelude     hiding (putStrLn, readFile)
@@ -91,8 +91,20 @@ examples = [
       screen <- SDL.getWindowSurface window
       SDL.blitSurface text Nothing screen Nothing
       SDL.freeSurface text
-      SDL.updateWindowSurface window)
+      SDL.updateWindowSurface window),
 
+  ("Check existence of weird chars, blit them",
+    \window path -> do
+      font <- SDL.Font.load path 80
+      let chars = "☃Δ✭"
+      exist <- mapM (SDL.Font.glyphProvided font) $ unpack chars
+      print $ zip (unpack chars) exist
+      text <- SDL.Font.blended font red chars
+      SDL.Font.free font
+      screen <- SDL.getWindowSurface window
+      SDL.blitSurface text Nothing screen Nothing
+      SDL.freeSurface text
+      SDL.updateWindowSurface window)
   ]
 
 main :: IO ()
