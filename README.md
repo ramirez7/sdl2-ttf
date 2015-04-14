@@ -18,9 +18,14 @@ cd sdl2-ttf
 cabal install
 ```
 
+Note that you might get compile errors if you're not using the latest GHC. Only
+7.10 is currently tested.
+
 ##### Documentation
 
-You can find the documentation [here](https://bidin.eu/docs/sdl2-ttf). The
+You can find the documentation [here](https://bidin.eu/docs/sdl2-ttf).
+
+The
 [original SDL_ttf documentation](http://www.libsdl.org/projects/SDL_ttf/docs/SDL_ttf.html)
 can also help, as the bindings are close to a direct mapping.
 
