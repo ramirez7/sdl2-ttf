@@ -1,5 +1,7 @@
 # sdl2-ttf
 
+[![Build Status](https://travis-ci.org/sbidin/sdl2-ttf.svg?branch=master)](https://travis-ci.org/sbidin/sdl2-ttf)
+
 #### Haskell bindings to SDL_ttf
 
 Both the raw and the higher level bindings should allow you to use any aspect
