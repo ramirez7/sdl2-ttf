@@ -1,7 +1,7 @@
 name:          sdl2-ttf
 version:       0.2
-synopsis:      Bindings to SDL_ttf.
-description:   Haskell bindings to SDL_ttf.
+synopsis:      Bindings to SDL2_ttf.
+description:   Haskell bindings to SDL2_ttf.
 license:       MIT
 license-file:  LICENSE
 author:        Siniša Biđin
@@ -55,11 +55,11 @@ executable sdl2-ttf-example
 
   if flag(example)
     build-depends:
-      base     >= 4.7 && < 5,
-      bytestring   >= 0.10.4.0,
-      linear   >= 1.10.1.2,
-      sdl2     >= 2.0,
-      sdl2-ttf >= 0.1,
-      text     >= 1.1.0.0
+      base       >= 4.7 && < 5,
+      bytestring >= 0.10.4.0,
+      linear     >= 1.10.1.2,
+      sdl2       >= 2.0,
+      sdl2-ttf   >= 0.1,
+      text       >= 1.1.0.0
   else
     buildable: False

@@ -6,7 +6,7 @@ License     : MIT
 Maintainer  : sinisa@bidin.cc
 Stability   : experimental
 
-Bindings to the @SDL_ttf@ library. These should allow you to load fonts and
+Bindings to the @SDL2_ttf@ library. These should allow you to load fonts and
 render 'Text' in various styles to an @SDL@ 'Surface'.
 
 You can safely assume that any monadic action listed here is capable of
@@ -41,7 +41,7 @@ module SDL.Font
   -- * Rendering
   --
   -- | Use the following actions to render text to a 'Surface'. The differing
-  -- methods available are described in more detail in the original @SDL_ttf@
+  -- methods available are described in more detail in the original @SDL2_ttf@
   -- documentation
   -- <http://www.libsdl.org/projects/SDL_ttf/docs/SDL_ttf.html#SEC42 here>.
   , Color
@@ -109,7 +109,7 @@ import SDL.Raw.Filesystem     (rwFromConstMem)
 import qualified SDL.Raw
 import qualified SDL.Raw.Font
 
--- | Gets the major, minor, patch versions of the linked @SDL_ttf@ library.
+-- | Gets the major, minor, patch versions of the linked @SDL2_ttf@ library.
 -- You may call this without initializing the library with 'initialize'.
 version :: (Integral a, MonadIO m) => m (a, a, a)
 version = liftIO $ do
@@ -393,7 +393,7 @@ glyphIndex (Font font) ch =
 --     4. maximum y offset
 --     5. advance offset
 --
--- You can see more information about these values in the original @SDL_ttf@
+-- You can see more information about these values in the original @SDL2_ttf@
 -- documentation
 -- <http://www.libsdl.org/projects/SDL_ttf/docs/SDL_ttf.html#SEC38 here>.
 glyphMetrics :: MonadIO m => Font -> Char -> m (Maybe (Int, Int, Int, Int, Int))

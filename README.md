@@ -2,10 +2,10 @@
 
 [![Build Status](https://travis-ci.org/sbidin/sdl2-ttf.svg?branch=master)](https://travis-ci.org/sbidin/sdl2-ttf)
 
-#### Haskell bindings to SDL_ttf
+#### Haskell bindings to SDL2_ttf
 
 Both the raw and the higher level bindings should allow you to use any aspect
-of the original SDL_ttf library. Please report an issue if you encounter a bug
+of the original SDL2_ttf library. Please report an issue if you encounter a bug
 or feel that something is missing.
 
 ##### Install
@@ -28,7 +28,7 @@ Note that you might get compile errors if you're not using the latest GHC. Only
 You can find the documentation [here](https://bidin.eu/docs/sdl2-ttf).
 
 The
-[original SDL_ttf documentation](http://www.libsdl.org/projects/SDL_ttf/docs/SDL_ttf.html)
+[original SDL2_ttf documentation](http://www.libsdl.org/projects/SDL_ttf/docs/SDL_ttf.html)
 can also help, as the bindings are close to a direct mapping.
 
 ##### Example

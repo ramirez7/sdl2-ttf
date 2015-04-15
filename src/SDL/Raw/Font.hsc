@@ -6,8 +6,8 @@ License     : MIT
 Maintainer  : sinisa@bidin.cc
 Stability   : experimental
 
-Raw bindings to the @SDL_ttf@ library. No error-handling is done here. For more
-information about specific function behaviour, see the @SDL_ttf@ documentation.
+Raw bindings to the @SDL2_ttf@ library. No error-handling is done here. For more
+information about specific function behaviour, see the @SDL2_ttf@ documentation.
 
 -}
 
