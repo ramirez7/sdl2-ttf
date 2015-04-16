@@ -9,7 +9,7 @@ Stability   : experimental
 Bindings to the @SDL2_ttf@ library. These should allow you to load fonts and
 render 'Text' in various styles to an @SDL@ 'Surface'.
 
-You can safely assume that any monadic action listed here is capable of
+You can safely assume that any monadic function listed here is capable of
 throwing an 'SDLException' in case it encounters an error.
 
 -}
@@ -28,7 +28,7 @@ module SDL.Font
 
   -- * Loading
   --
-  -- | Use the following actions to load @TTF@ and @FON@ file formats.
+  -- | Use the following functions to load @TTF@ and @FON@ file formats.
   , Font(..)
   , PointSize
   , load
@@ -40,7 +40,7 @@ module SDL.Font
 
   -- * Rendering
   --
-  -- | Use the following actions to render text to a 'Surface'. The differing
+  -- | Use the following functions to render text to a 'Surface'. The differing
   -- methods available are described in more detail in the original @SDL2_ttf@
   -- documentation
   -- <http://www.libsdl.org/projects/SDL_ttf/docs/SDL_ttf.html#SEC42 here>.
