@@ -92,7 +92,6 @@ module SDL.Raw.Font
 
 #include "SDL_ttf.h"
 
-import Control.Monad.IO.Class (MonadIO, liftIO)
 import Foreign.C.String       (CString)
 import Foreign.C.Types        (CInt(..), CLong(..), CUShort(..))
 import Foreign.Ptr            (Ptr)
