@@ -100,6 +100,18 @@ import Prelude         hiding (init)
 import SDL.Raw.Types          (Version, Surface, RWops, Color)
 import SDL.Raw.Helper         (liftF)
 
+pattern UNICODE_BOM_NATIVE      = #{const UNICODE_BOM_NATIVE}
+pattern UNICODE_BOM_SWAPPED     = #{const UNICODE_BOM_SWAPPED}
+pattern TTF_STYLE_NORMAL        = #{const TTF_STYLE_NORMAL}
+pattern TTF_STYLE_BOLD          = #{const TTF_STYLE_BOLD}
+pattern TTF_STYLE_ITALIC        = #{const TTF_STYLE_ITALIC}
+pattern TTF_STYLE_UNDERLINE     = #{const TTF_STYLE_UNDERLINE}
+pattern TTF_STYLE_STRIKETHROUGH = #{const TTF_STYLE_STRIKETHROUGH}
+pattern TTF_HINTING_LIGHT       = #{const TTF_HINTING_LIGHT}
+pattern TTF_HINTING_MONO        = #{const TTF_HINTING_MONO}
+pattern TTF_HINTING_NONE        = #{const TTF_HINTING_NONE}
+pattern TTF_HINTING_NORMAL      = #{const TTF_HINTING_NORMAL}
+
 foreign import ccall "TTF_Linked_Version"
   getVersion' :: IO (Ptr Version)
 
@@ -128,6 +140,7 @@ foreign import ccall "TTF_Quit"
 quit :: MonadIO m => m ()
 quit = liftIO quit'
 
+-- | A path to a font file.
 type FontPath = CString
 
 -- | Point size (based on 72DPI). Translates to pixel height.
@@ -136,16 +149,17 @@ type PointSize = CInt
 -- | The raw, underlying @TTF_Font@ struct.
 data Font
 
-liftF "openFont" "TTF_OpenFont" [t|FontPath -> PointSize -> IO (Ptr Font)|]
-
 -- | Should the 'Ptr' 'RWops' be freed after an operation? 1 for yes, 0 for no.
 type Free = CInt
 
-liftF "openFont_RW" "TTF_OpenFontRW"
-  [t|Ptr RWops -> Free -> PointSize -> IO (Ptr Font)|]
-
 -- | Indicates the font face we're loading. First face is always 0.
 type Index = CLong
+
+liftF "openFont" "TTF_OpenFont"
+  [t|FontPath -> PointSize -> IO (Ptr Font)|]
+
+liftF "openFont_RW" "TTF_OpenFontRW"
+  [t|Ptr RWops -> Free -> PointSize -> IO (Ptr Font)|]
 
 liftF "openFontIndex" "TTF_OpenFontIndex"
   [t|FontPath -> PointSize -> Index -> IO (Ptr Font)|]
@@ -153,46 +167,59 @@ liftF "openFontIndex" "TTF_OpenFontIndex"
 liftF "openFontIndex_RW" "TTF_OpenFontIndexRW"
   [t|Ptr RWops -> Free -> PointSize -> Index -> IO (Ptr Font)|]
 
-liftF "closeFont" "TTF_CloseFont" [t|Ptr Font -> IO ()|]
+liftF "closeFont" "TTF_CloseFont"
+  [t|Ptr Font -> IO ()|]
 
-liftF "byteSwappedUNICODE" "TTF_ByteSwappedUNICODE" [t|CInt -> IO ()|]
+liftF "byteSwappedUNICODE" "TTF_ByteSwappedUNICODE"
+  [t|CInt -> IO ()|]
 
-pattern UNICODE_BOM_NATIVE  = #{const UNICODE_BOM_NATIVE}
-pattern UNICODE_BOM_SWAPPED = #{const UNICODE_BOM_SWAPPED}
+liftF "getFontStyle" "TTF_GetFontStyle"
+  [t|Ptr Font -> IO CInt|]
 
-liftF "getFontStyle" "TTF_GetFontStyle" [t|Ptr Font -> IO CInt|]
-liftF "setFontStyle" "TTF_SetFontStyle" [t|Ptr Font -> CInt -> IO ()|]
+liftF "setFontStyle" "TTF_SetFontStyle"
+  [t|Ptr Font -> CInt -> IO ()|]
 
-pattern TTF_STYLE_NORMAL        = #{const TTF_STYLE_NORMAL}
-pattern TTF_STYLE_BOLD          = #{const TTF_STYLE_BOLD}
-pattern TTF_STYLE_ITALIC        = #{const TTF_STYLE_ITALIC}
-pattern TTF_STYLE_UNDERLINE     = #{const TTF_STYLE_UNDERLINE}
-pattern TTF_STYLE_STRIKETHROUGH = #{const TTF_STYLE_STRIKETHROUGH}
+liftF "getFontOutline" "TTF_GetFontOutline"
+  [t|Ptr Font -> IO CInt|]
 
-liftF "getFontOutline" "TTF_GetFontOutline" [t|Ptr Font -> IO CInt|]
-liftF "setFontOutline" "TTF_SetFontOutline" [t|Ptr Font -> CInt -> IO ()|]
+liftF "setFontOutline" "TTF_SetFontOutline"
+  [t|Ptr Font -> CInt -> IO ()|]
 
-liftF "getFontHinting" "TTF_GetFontHinting" [t|Ptr Font -> IO CInt|]
-liftF "setFontHinting" "TTF_SetFontHinting" [t|Ptr Font -> CInt -> IO ()|]
+liftF "getFontHinting" "TTF_GetFontHinting"
+  [t|Ptr Font -> IO CInt|]
 
-pattern TTF_HINTING_LIGHT  = #{const TTF_HINTING_LIGHT}
-pattern TTF_HINTING_MONO   = #{const TTF_HINTING_MONO}
-pattern TTF_HINTING_NONE   = #{const TTF_HINTING_NONE}
-pattern TTF_HINTING_NORMAL = #{const TTF_HINTING_NORMAL}
+liftF "setFontHinting" "TTF_SetFontHinting"
+  [t|Ptr Font -> CInt -> IO ()|]
 
-liftF "getFontKerning" "TTF_GetFontKerning" [t|Ptr Font -> IO CInt|]
-liftF "setFontKerning" "TTF_SetFontKerning" [t|Ptr Font -> CInt -> IO ()|]
+liftF "getFontKerning" "TTF_GetFontKerning"
+  [t|Ptr Font -> IO CInt|]
 
-liftF "fontHeight"   "TTF_FontHeight"   [t|Ptr Font -> IO CInt|]
-liftF "fontAscent"   "TTF_FontAscent"   [t|Ptr Font -> IO CInt|]
-liftF "fontDescent"  "TTF_FontDescent"  [t|Ptr Font -> IO CInt|]
-liftF "fontLineSkip" "TTF_FontLineSkip" [t|Ptr Font -> IO CInt|]
-liftF "fontFaces"    "TTF_FontFaces"    [t|Ptr Font -> IO CLong|]
+liftF "setFontKerning" "TTF_SetFontKerning"
+  [t|Ptr Font -> CInt -> IO ()|]
 
-liftF "fontFaceIsFixedWidth" "TTF_FontFaceIsFixedWidth" [t|Ptr Font -> IO CInt|]
+liftF "fontHeight" "TTF_FontHeight"
+  [t|Ptr Font -> IO CInt|]
 
-liftF "fontFaceFamilyName" "TTF_FontFaceFamilyName" [t|Ptr Font -> IO CString|]
-liftF "fontFaceStyleName"  "TTF_FontFaceStyleName"  [t|Ptr Font -> IO CString|]
+liftF "fontAscent" "TTF_FontAscent"
+  [t|Ptr Font -> IO CInt|]
+
+liftF "fontDescent" "TTF_FontDescent"
+  [t|Ptr Font -> IO CInt|]
+
+liftF "fontLineSkip" "TTF_FontLineSkip"
+  [t|Ptr Font -> IO CInt|]
+
+liftF "fontFaces" "TTF_FontFaces"
+  [t|Ptr Font -> IO CLong|]
+
+liftF "fontFaceIsFixedWidth" "TTF_FontFaceIsFixedWidth"
+  [t|Ptr Font -> IO CInt|]
+
+liftF "fontFaceFamilyName" "TTF_FontFaceFamilyName"
+  [t|Ptr Font -> IO CString|]
+
+liftF "fontFaceStyleName"  "TTF_FontFaceStyleName"
+  [t|Ptr Font -> IO CString|]
 
 liftF "glyphIsProvided" "TTF_GlyphIsProvided"
   [t|Ptr Font -> CUShort -> IO CInt|]
