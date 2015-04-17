@@ -112,33 +112,17 @@ pattern TTF_HINTING_MONO        = #{const TTF_HINTING_MONO}
 pattern TTF_HINTING_NONE        = #{const TTF_HINTING_NONE}
 pattern TTF_HINTING_NORMAL      = #{const TTF_HINTING_NORMAL}
 
-foreign import ccall "TTF_Linked_Version"
-  getVersion' :: IO (Ptr Version)
+liftF "getVersion" "TTF_Linked_Version"
+  [t|IO (Ptr Version)|]
 
-{-# INLINE getVersion #-}
-getVersion :: MonadIO m => m (Ptr Version)
-getVersion = liftIO getVersion'
+liftF "init" "TTF_Init"
+  [t|IO CInt|]
 
-foreign import ccall "TTF_Init"
-  init' :: IO CInt
+liftF "wasInit" "TTF_WasInit"
+  [t|IO CInt|]
 
-{-# INLINE init #-}
-init :: MonadIO m => m CInt
-init = liftIO init'
-
-foreign import ccall "TTF_WasInit"
-  wasInit' :: IO CInt
-
-{-# INLINE wasInit #-}
-wasInit :: MonadIO m => m CInt
-wasInit = liftIO wasInit'
-
-foreign import ccall "TTF_Quit"
-  quit' :: IO ()
-
-{-# INLINE quit #-}
-quit :: MonadIO m => m ()
-quit = liftIO quit'
+liftF "quit" "TTF_Quit"
+  [t|IO ()|]
 
 -- | A path to a font file.
 type FontPath = CString
