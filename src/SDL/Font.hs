@@ -14,7 +14,6 @@ throwing an 'SDLException' in case it encounters an error.
 
 -}
 
-{-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE DeriveGeneric      #-}
 {-# LANGUAGE LambdaCase         #-}
 {-# LANGUAGE OverloadedStrings  #-}
@@ -88,11 +87,9 @@ import Control.Monad.IO.Class (MonadIO, liftIO)
 import Data.Bits              ((.&.), (.|.))
 import Data.ByteString        (ByteString)
 import Data.ByteString.Unsafe (unsafeUseAsCStringLen, unsafePackCString)
-import Data.Data              (Data)
 import Data.Text              (Text)
 import Data.Text.Encoding     (decodeUtf8)
 import Data.Text.Foreign      (lengthWord16, unsafeCopyToPtr)
-import Data.Typeable          (Typeable)
 import Data.Word              (Word8, Word16)
 import Foreign.C.String       (CString, withCString)
 import Foreign.C.Types        (CUShort, CInt)
@@ -132,7 +129,7 @@ quit = SDL.Raw.Font.quit
 
 -- | Represents a loaded font.
 newtype Font = Font { unwrap :: Ptr SDL.Raw.Font.Font }
-  deriving (Eq, Typeable)
+  deriving (Eq, Show)
 
 -- | Point size (based on 72DPI) to load font as. Translates to pixel height.
 type PointSize = Int
@@ -247,7 +244,7 @@ data Style
   | Italic
   | Underline
   | Strikethrough
-  deriving (Eq, Enum, Ord, Bounded, Data, Generic, Typeable, Read, Show)
+  deriving (Eq, Enum, Ord, Bounded, Generic, Read, Show)
 
 styleToCInt :: Style -> CInt
 styleToCInt =
@@ -283,7 +280,7 @@ data Hinting
   | Light
   | Mono
   | None
-  deriving (Eq, Enum, Ord, Bounded, Data, Generic, Typeable, Read, Show)
+  deriving (Eq, Enum, Ord, Bounded, Generic, Read, Show)
 
 hintingToCInt :: Hinting -> CInt
 hintingToCInt =
