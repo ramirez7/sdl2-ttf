@@ -39,9 +39,10 @@ module SDL.Font
 
   -- * Rendering
   --
-  -- | Use the following functions to render text to a 'Surface'. The differing
-  -- methods available are described in more detail in the original @SDL2_ttf@
-  -- documentation
+  -- | Use the following functions to render text to a 'Surface'.
+  --
+  -- The methods available are described in more detail in the original
+  -- @SDL2_ttf@ documentation
   -- <http://www.libsdl.org/projects/SDL_ttf/docs/SDL_ttf.html#SEC42 here>.
   , Color
   , solid
@@ -107,23 +108,29 @@ import qualified SDL.Raw
 import qualified SDL.Raw.Font
 
 -- | Gets the major, minor, patch versions of the linked @SDL2_ttf@ library.
+--
 -- You may call this without initializing the library with 'initialize'.
 version :: (Integral a, MonadIO m) => m (a, a, a)
 version = liftIO $ do
   SDL.Raw.Version major minor patch <- peek =<< SDL.Raw.Font.getVersion
   return (fromIntegral major, fromIntegral minor, fromIntegral patch)
 
--- | Initializes the library. Unless noted otherwise, this must be called
--- before any other part of the library is used. You may call this multiple
--- times.
+-- | Initializes the library.
+--
+-- Unless noted otherwise, this must be called before any other part of the
+-- library is used.
+--
+-- You may call this multiple times.
 initialize :: MonadIO m => m ()
 initialize = do
   init'd <- (== 1) `fmap` SDL.Raw.Font.wasInit
   unless init'd $
     throwIfNeg_ "SDL.Font.initialize" "TTF_Init" SDL.Raw.Font.init
 
--- | Cleans up any resources still in use by the library. If called, you must
--- call 'initialize' again before using any other parts of the library.
+-- | Cleans up any resources still in use by the library.
+--
+-- If called, you must call 'initialize' again before using any other parts of
+-- the library.
 quit :: MonadIO m => m ()
 quit = SDL.Raw.Font.quit
 
@@ -156,8 +163,10 @@ decode bytes pts = liftIO $ do
 type Index = Int
 
 -- | Given a path to a font file, loads one of its font faces (designated by
--- the given index) for use as a 'Font' at a certain 'PointSize'. The first
--- face is always index 0, and is the one chosen by default when using 'load'.
+-- the given index) for use as a 'Font' at a certain 'PointSize'.
+--
+-- The first face is always index 0, and is the one chosen by default when
+-- using 'load'.
 loadIndex :: MonadIO m => FilePath -> PointSize -> Index -> m Font
 loadIndex path pts i = do
   fmap Font .
@@ -181,8 +190,10 @@ free = SDL.Raw.Font.closeFont . unwrap
 -- | Color as an RGBA byte vector.
 type Color = V4 Word8
 
--- | Renders 'Text' using the /quick and dirty/ method. Is the fastest of the
--- rendering methods, but results in text that isn't as /smooth/.
+-- | Renders 'Text' using the /quick and dirty/ method.
+--
+-- Is the fastest of the rendering methods, but results in text that isn't as
+-- /smooth/.
 solid :: MonadIO m => Font -> Color -> Text -> m SDL.Surface
 solid (Font font) (V4 r g b a) text =
   fmap SDL.Surface .
@@ -191,10 +202,13 @@ solid (Font font) (V4 r g b a) text =
         with (SDL.Raw.Color r g b a) $ \fg ->
           SDL.Raw.Font.renderUNICODE_Solid font (castPtr ptr) fg
 
--- | Uses the /slow and nice, but with a solid box/ method. Renders slower than
--- 'solid', but in about the same time as 'blended'. Results in a 'Surface'
--- containing antialiased text of a foreground color surrounded by a box of a
--- background color. This 'Surface' will blit as fast as the one from 'solid'.
+-- | Uses the /slow and nice, but with a solid box/ method.
+--
+-- Renders slower than 'solid', but in about the same time as 'blended'.
+--
+-- Results in a 'Surface' containing antialiased text of a foreground color
+-- surrounded by a box of a background color. This 'Surface' will blit as fast
+-- as the one from 'solid'.
 shaded :: MonadIO m => Font -> Color -> Color -> Text -> m SDL.Surface
 shaded (Font font) (V4 r g b a) (V4 r2 g2 b2 a2) text =
   fmap SDL.Surface .
@@ -205,10 +219,13 @@ shaded (Font font) (V4 r g b a) (V4 r2 g2 b2 a2) text =
             SDL.Raw.Font.renderUNICODE_Shaded font (castPtr ptr) fg bg
 
 -- | The /slow slow slow, but ultra nice over another image/ method, 'blended'
--- renders text at high quality. The text is antialiased and surrounded by a
--- transparent box. Renders slower than 'solid', but in about the same time as
--- 'shaded'. The resulting 'Surface' will blit slower than the ones from
--- 'solid' or 'shaded'.
+-- renders text at high quality.
+--
+-- The text is antialiased and surrounded by a transparent box. Renders slower
+-- than 'solid', but in about the same time as 'shaded'.
+--
+-- The resulting 'Surface' will blit slower than the ones from 'solid' or
+-- 'shaded'.
 blended :: MonadIO m => Font -> Color -> Text -> m SDL.Surface
 blended (Font font) (V4 r g b a) text =
   fmap SDL.Surface .
@@ -254,23 +271,30 @@ styleToCInt =
     Underline     -> SDL.Raw.Font.TTF_STYLE_UNDERLINE
     Strikethrough -> SDL.Raw.Font.TTF_STYLE_STRIKETHROUGH
 
--- | Gets the rendering styles of a given 'Font'. If none were ever set, this
--- will be an empty list.
+-- | Gets the rendering styles of a given 'Font'.
+--
+-- If none were ever set, this will be an empty list.
 getStyle :: MonadIO m => Font -> m [Style]
 getStyle = fmap (fromMaskWith styleToCInt) . SDL.Raw.Font.getFontStyle . unwrap
 
--- | Sets the rendering style of a 'Font'. Use an empty list to reset the style.
+-- | Sets the rendering style of a 'Font'.
+--
+-- Use an empty list to reset the style.
 setStyle :: MonadIO m => Font -> [Style] -> m ()
 setStyle (Font font) = SDL.Raw.Font.setFontStyle font . toMaskWith styleToCInt
 
--- | The size of the 'Font' outline, in pixels. Use 0 to turn off outlining.
+-- | The size of the 'Font' outline, in pixels.
+--
+-- Use 0 to turn off outlining.
 type Outline = Int
 
 -- | Gets the current outline size of a given 'Font'.
 getOutline :: MonadIO m => Font -> m Outline
 getOutline = fmap fromIntegral . SDL.Raw.Font.getFontOutline . unwrap
 
--- | Sets the outline size for a given 'Font'. Use 0 to turn off outlining.
+-- | Sets the outline size for a given 'Font'.
+--
+-- Use 0 to turn off outlining.
 setOutline :: MonadIO m => Font -> Outline -> m ()
 setOutline (Font font) = SDL.Raw.Font.setFontOutline font . fromIntegral
 
@@ -303,19 +327,22 @@ cIntToHinting =
 getHinting :: MonadIO m => Font -> m Hinting
 getHinting = fmap cIntToHinting . SDL.Raw.Font.getFontHinting . unwrap
 
--- | Sets the rendering styles of a font. Use an empty list to reset the style.
+-- | Sets the hinting setting of a font.
 setHinting :: MonadIO m => Font -> Hinting -> m ()
 setHinting (Font font) = SDL.Raw.Font.setFontHinting font . hintingToCInt
 
--- | Whether kerning is enabled or not. The default for a newly-loaded 'Font'
--- is enabled.
+-- | Whether kerning is enabled or not.
+--
+-- The default for a newly-loaded 'Font' is enabled.
 type Kerning = Bool
 
 -- | Gets the current kerning setting of a given 'Font'.
 getKerning :: MonadIO m => Font -> m Kerning
 getKerning = fmap toBool . SDL.Raw.Font.getFontKerning . unwrap
 
--- | Sets the kerning setting for a given 'Font'. Use False to turn off kerning.
+-- | Sets the kerning setting for a given 'Font'.
+--
+-- Use 'False' to turn off kerning.
 setKerning :: MonadIO m => Font -> Kerning -> m ()
 setKerning (Font font) = SDL.Raw.Font.setFontKerning font . fromBool
 
@@ -323,18 +350,24 @@ setKerning (Font font) = SDL.Raw.Font.setFontKerning font . fromBool
 height :: MonadIO m => Font -> m Int
 height = fmap fromIntegral . SDL.Raw.Font.fontHeight . unwrap
 
--- | Gets the maximum pixel ascent of all glyphs of a given 'Font'. This can be
--- interpreted as the distance from the top of the font to the baseline.
+-- | Gets the maximum pixel ascent of all glyphs of a given 'Font'.
+--
+-- This can be interpreted as the distance from the top of the font to the
+-- baseline.
 ascent :: MonadIO m => Font -> m Int
 ascent = fmap fromIntegral . SDL.Raw.Font.fontAscent . unwrap
 
--- | Gets the maximum pixel descent of all glyphs of a given 'Font'. Also
--- interpreted as the distance from the baseline to the bottom of the font.
+-- | Gets the maximum pixel descent of all glyphs of a given 'Font'.
+--
+-- Also interpreted as the distance from the baseline to the bottom of the
+-- font.
 descent :: MonadIO m => Font -> m Int
 descent = fmap fromIntegral . SDL.Raw.Font.fontDescent . unwrap
 
 -- | Gets the recommended pixel height of a rendered line of text of a given
--- 'Font'. This is usually larger than what 'height' would return.
+-- 'Font'.
+--
+-- This is usually larger than what 'height' would return.
 lineSkip :: MonadIO m => Font -> m Int
 lineSkip = fmap fromIntegral . SDL.Raw.Font.fontLineSkip . unwrap
 
@@ -419,10 +452,12 @@ throwFailed caller rawfunc =
   liftIO $ throwIO =<< SDLCallFailed caller rawfunc <$> getError
 
 -- | Use this function to discover how wide and tall a 'Surface' needs to be
--- in order to accommodate a given text when it is rendered. Note that no
--- actual rendering takes place. The height returned is the same one returned
--- by 'height'. This function does not support multiline text. The values
--- returned are the width and height, respectively, in pixels.
+-- in order to accommodate a given text when it is rendered.
+--
+-- Note that no actual rendering takes place.
+--
+-- The values returned are the width and height, respectively, in pixels. The
+-- height returned is the same one returned by 'height'.
 size :: MonadIO m => Font -> Text -> m (Int, Int)
 size (Font font) text =
     liftIO .
