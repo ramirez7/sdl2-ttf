@@ -144,7 +144,7 @@ type PointSize = Int
 -- | Given a path to a font file, loads it for use as a 'Font' at a certain
 -- 'PointSize'.
 load :: MonadIO m => FilePath -> PointSize -> m Font
-load path pts = do
+load path pts =
   fmap Font .
     throwIfNull "SDL.Font.load" "TTF_OpenFont" .
       liftIO . withCString path $
@@ -152,7 +152,7 @@ load path pts = do
 
 -- | Same as 'load', but accepts a 'ByteString' containing a font instead.
 decode :: MonadIO m => ByteString -> PointSize -> m Font
-decode bytes pts = liftIO $ do
+decode bytes pts = liftIO .
   unsafeUseAsCStringLen bytes $ \(cstr, len) -> do
     rw <- rwFromConstMem (castPtr cstr) (fromIntegral len)
     fmap Font .
@@ -168,7 +168,7 @@ type Index = Int
 -- The first face is always index 0, and is the one chosen by default when
 -- using 'load'.
 loadIndex :: MonadIO m => FilePath -> PointSize -> Index -> m Font
-loadIndex path pts i = do
+loadIndex path pts i =
   fmap Font .
     throwIfNull "SDL.Font.loadIndex" "TTF_OpenFontIndex" .
       liftIO . withCString path $ \cpath ->
@@ -176,7 +176,7 @@ loadIndex path pts i = do
 
 -- | Same as 'loadIndex', but accepts a 'ByteString' containing a font instead.
 decodeIndex :: MonadIO m => ByteString -> PointSize -> Index -> m Font
-decodeIndex bytes pts i = liftIO $ do
+decodeIndex bytes pts i = liftIO .
   unsafeUseAsCStringLen bytes $ \(cstr, len) -> do
     rw <- rwFromConstMem (castPtr cstr) (fromIntegral len)
     fmap Font .
@@ -213,7 +213,7 @@ shaded :: MonadIO m => Font -> Color -> Color -> Text -> m SDL.Surface
 shaded (Font font) (V4 r g b a) (V4 r2 g2 b2 a2) text =
   fmap SDL.Surface .
     throwIfNull "SDL.Font.shaded" "TTF_RenderUNICODE_Shaded" .
-      liftIO . withText text $ \ptr -> do
+      liftIO . withText text $ \ptr ->
         with (SDL.Raw.Color r g b a) $ \fg ->
           with (SDL.Raw.Color r2 g2 b2 a2) $ \bg ->
             SDL.Raw.Font.renderUNICODE_Shaded font (castPtr ptr) fg bg
@@ -230,7 +230,7 @@ blended :: MonadIO m => Font -> Color -> Text -> m SDL.Surface
 blended (Font font) (V4 r g b a) text =
   fmap SDL.Surface .
     throwIfNull "SDL.Font.blended" "TTF_RenderUNICODE_Blended" .
-      liftIO . withText text $ \ptr -> do
+      liftIO . withText text $ \ptr ->
         with (SDL.Raw.Color r g b a) $ \fg ->
           SDL.Raw.Font.renderUNICODE_Blended font (castPtr ptr) fg
 
@@ -247,13 +247,13 @@ withText text act =
 
 -- Helper function for converting a bitmask into a list of values.
 fromMaskWith :: (Enum a, Bounded a) => (a -> CInt) -> CInt -> [a]
-fromMaskWith convert cint = concatMap (\a -> find (a, convert a)) $ [minBound..]
+fromMaskWith convert cint = concatMap (\a -> find (a, convert a)) [minBound..]
   where
-    find (a, i) = if i == i .&. cint then [a] else []
+    find (a, i) = [a | i == i .&. cint]
 
 -- Helper function for converting a list of values into a bitmask.
 toMaskWith :: (a -> CInt) -> [a] -> CInt
-toMaskWith convert = foldr (.|.) 0 . map convert
+toMaskWith convert = foldr ((.|.) . convert) 0
 
 -- | Possible styles that can be applied to a 'Font'.
 data Style
@@ -439,11 +439,11 @@ glyphMetrics (Font font) ch =
               if r /= 0 then
                 return Nothing
               else do
-                a <- fmap fromIntegral $ peek minx
-                b <- fmap fromIntegral $ peek maxx
-                c <- fmap fromIntegral $ peek miny
-                d <- fmap fromIntegral $ peek maxy
-                e <- fmap fromIntegral $ peek advn
+                a <- fromIntegral <$> peek minx
+                b <- fromIntegral <$> peek maxx
+                c <- fromIntegral <$> peek miny
+                d <- fromIntegral <$> peek maxy
+                e <- fromIntegral <$> peek advn
                 return $ Just (a, b, c, d, e)
 
 -- Allows us to just throw an SDL exception directly.
@@ -467,8 +467,8 @@ size (Font font) text =
             SDL.Raw.Font.sizeUNICODE font (castPtr ptr) w h
               >>= \case
                 0 -> do
-                  w' <- fmap fromIntegral $ peek w
-                  h' <- fmap fromIntegral $ peek h
+                  w' <- fromIntegral <$> peek w
+                  h' <- fromIntegral <$> peek h
                   return (w', h')
                 _ -> throwFailed "SDL.Font.size" "TTF_SizeUNICODE"
 
