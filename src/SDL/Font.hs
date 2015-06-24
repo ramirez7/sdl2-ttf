@@ -82,7 +82,6 @@ module SDL.Font
   , blendedGlyph
   ) where
 
-import Control.Exception      (throwIO)
 import Control.Monad          (unless)
 import Control.Monad.IO.Class (MonadIO, liftIO)
 import Data.Bits              ((.&.), (.|.))
@@ -100,8 +99,8 @@ import Foreign.Ptr            (Ptr, castPtr, nullPtr)
 import Foreign.Storable       (peek, pokeByteOff)
 import GHC.Generics           (Generic)
 import Linear                 (V4(..))
+import SDL.ExceptionHelper
 import SDL                    (Surface(..))
-import SDL.Exception          (SDLException(..), throwIfNull, throwIfNeg_, getError)
 import SDL.Raw.Filesystem     (rwFromConstMem)
 
 import qualified SDL.Raw
@@ -445,11 +444,6 @@ glyphMetrics (Font font) ch =
                 d <- fromIntegral <$> peek maxy
                 e <- fromIntegral <$> peek advn
                 return $ Just (a, b, c, d, e)
-
--- Allows us to just throw an SDL exception directly.
-throwFailed :: MonadIO m => Text -> Text -> m a
-throwFailed caller rawfunc =
-  liftIO $ throwIO =<< SDLCallFailed caller rawfunc <$> getError
 
 -- | Use this function to discover how wide and tall a 'Surface' needs to be
 -- in order to accommodate a given text when it is rendered.
