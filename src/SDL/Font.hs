@@ -189,13 +189,17 @@ free = SDL.Raw.Font.closeFont . unwrap
 -- | Color as an RGBA byte vector.
 type Color = V4 Word8
 
+-- | A helper for unmanaged 'Surface's, since it is not exposed by SDL itself.
+unmanaged :: Ptr SDL.Raw.Surface -> Surface
+unmanaged p = Surface p Nothing
+
 -- | Renders 'Text' using the /quick and dirty/ method.
 --
 -- Is the fastest of the rendering methods, but results in text that isn't as
 -- /smooth/.
 solid :: MonadIO m => Font -> Color -> Text -> m SDL.Surface
 solid (Font font) (V4 r g b a) text =
-  fmap SDL.Surface .
+  fmap unmanaged .
     throwIfNull "SDL.Font.solid" "TTF_RenderUNICODE_Solid" .
       liftIO . withText text $ \ptr ->
         with (SDL.Raw.Color r g b a) $ \fg ->
@@ -210,7 +214,7 @@ solid (Font font) (V4 r g b a) text =
 -- as the one from 'solid'.
 shaded :: MonadIO m => Font -> Color -> Color -> Text -> m SDL.Surface
 shaded (Font font) (V4 r g b a) (V4 r2 g2 b2 a2) text =
-  fmap SDL.Surface .
+  fmap unmanaged .
     throwIfNull "SDL.Font.shaded" "TTF_RenderUNICODE_Shaded" .
       liftIO . withText text $ \ptr ->
         with (SDL.Raw.Color r g b a) $ \fg ->
@@ -227,7 +231,7 @@ shaded (Font font) (V4 r g b a) (V4 r2 g2 b2 a2) text =
 -- 'shaded'.
 blended :: MonadIO m => Font -> Color -> Text -> m SDL.Surface
 blended (Font font) (V4 r g b a) text =
-  fmap SDL.Surface .
+  fmap unmanaged .
     throwIfNull "SDL.Font.blended" "TTF_RenderUNICODE_Blended" .
       liftIO . withText text $ \ptr ->
         with (SDL.Raw.Color r g b a) $ \fg ->
@@ -469,7 +473,7 @@ size (Font font) text =
 -- | Same as 'solid', but renders a single glyph instead.
 solidGlyph :: MonadIO m => Font -> Color -> Char -> m SDL.Surface
 solidGlyph (Font font) (V4 r g b a) ch =
-  fmap SDL.Surface .
+  fmap unmanaged .
     throwIfNull "SDL.Font.solidGlyph" "TTF_RenderGlyph_Solid" .
       liftIO .
         with (SDL.Raw.Color r g b a) $ \fg ->
@@ -478,7 +482,7 @@ solidGlyph (Font font) (V4 r g b a) ch =
 -- | Same as 'shaded', but renders a single glyph instead.
 shadedGlyph :: MonadIO m => Font -> Color -> Color -> Char -> m SDL.Surface
 shadedGlyph (Font font) (V4 r g b a) (V4 r2 g2 b2 a2) ch =
-  fmap SDL.Surface .
+  fmap unmanaged .
     throwIfNull "SDL.Font.shadedGlyph" "TTF_RenderGlyph_Solid" .
       liftIO .
         with (SDL.Raw.Color r g b a) $ \fg ->
@@ -488,7 +492,7 @@ shadedGlyph (Font font) (V4 r g b a) (V4 r2 g2 b2 a2) ch =
 -- | Same as 'blended', but renders a single glyph instead.
 blendedGlyph :: MonadIO m => Font -> Color -> Char -> m SDL.Surface
 blendedGlyph (Font font) (V4 r g b a) ch =
-  fmap SDL.Surface .
+  fmap unmanaged .
     throwIfNull "SDL.Font.blendedGlyph" "TTF_RenderGlyph_Blended" .
       liftIO .
         with (SDL.Raw.Color r g b a) $ \fg ->
