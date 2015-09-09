@@ -32,7 +32,7 @@ examples = [
       text <- SDL.Font.solid font red "Solid!"
       SDL.Font.free font
       screen <- SDL.getWindowSurface window
-      SDL.blitSurface text Nothing screen Nothing
+      SDL.surfaceBlit text Nothing screen Nothing
       SDL.freeSurface text
       SDL.updateWindowSurface window),
 
@@ -42,7 +42,7 @@ examples = [
       text <- SDL.Font.shaded font red gray "Shaded!"
       SDL.Font.free font
       screen <- SDL.getWindowSurface window
-      SDL.blitSurface text Nothing screen Nothing
+      SDL.surfaceBlit text Nothing screen Nothing
       SDL.freeSurface text
       SDL.updateWindowSurface window),
 
@@ -52,7 +52,7 @@ examples = [
       text <- SDL.Font.blended font red "Blended!"
       SDL.Font.free font
       screen <- SDL.getWindowSurface window
-      SDL.blitSurface text Nothing screen Nothing
+      SDL.surfaceBlit text Nothing screen Nothing
       SDL.freeSurface text
       SDL.updateWindowSurface window),
 
@@ -65,7 +65,7 @@ examples = [
       text <- SDL.Font.blended font red "Styled!"
       SDL.Font.free font
       screen <- SDL.getWindowSurface window
-      SDL.blitSurface text Nothing screen Nothing
+      SDL.surfaceBlit text Nothing screen Nothing
       SDL.freeSurface text
       SDL.updateWindowSurface window),
 
@@ -77,7 +77,7 @@ examples = [
       text <- SDL.Font.blended font red "Outlined!"
       SDL.Font.free font
       screen <- SDL.getWindowSurface window
-      SDL.blitSurface text Nothing screen Nothing
+      SDL.surfaceBlit text Nothing screen Nothing
       SDL.freeSurface text
       SDL.updateWindowSurface window),
 
@@ -94,7 +94,7 @@ examples = [
       print =<< SDL.Font.familyName font
       SDL.Font.free font
       screen <- SDL.getWindowSurface window
-      SDL.blitSurface text Nothing screen Nothing
+      SDL.surfaceBlit text Nothing screen Nothing
       SDL.freeSurface text
       SDL.updateWindowSurface window),
 
@@ -104,7 +104,7 @@ examples = [
       text <- SDL.Font.blendedGlyph font red 'ŏ'
       SDL.Font.free font
       screen <- SDL.getWindowSurface window
-      SDL.blitSurface text Nothing screen Nothing
+      SDL.surfaceBlit text Nothing screen Nothing
       SDL.freeSurface text
       SDL.updateWindowSurface window),
 
@@ -121,7 +121,7 @@ examples = [
       text <- SDL.Font.blended font red chars
       SDL.Font.free font
       screen <- SDL.getWindowSurface window
-      SDL.blitSurface text Nothing screen Nothing
+      SDL.surfaceBlit text Nothing screen Nothing
       SDL.freeSurface text
       SDL.updateWindowSurface window)
   ]
