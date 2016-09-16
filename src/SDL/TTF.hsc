@@ -46,8 +46,6 @@ import SDL.TTF.Internals
 import Control.Monad.IO.Class
 import Prelude hiding (init)
 
-import Debug.Trace
-
 -- | Initialize the truetype font API.
 -- This must be called before using other functions in this library, 
 -- except TTF_WasInit.

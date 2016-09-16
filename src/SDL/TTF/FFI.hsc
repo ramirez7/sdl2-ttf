@@ -1,4 +1,4 @@
-#include "SDL2/SDL_ttf.h"
+#include "SDL_ttf.h"
 module SDL.TTF.FFI where
 
 import Foreign.C
