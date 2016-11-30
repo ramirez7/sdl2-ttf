@@ -39,7 +39,6 @@ library
   build-depends:
     base             >= 4.7 && < 5,
     bytestring       >= 0.10.4.0,
-    linear           >= 1.10.1.2,
     sdl2             >= 2.0,
     template-haskell,
     text             >= 1.1.0.0,
@@ -62,7 +61,6 @@ executable sdl2-ttf-example
     build-depends:
       base       >= 4.7 && < 5,
       bytestring >= 0.10.4.0,
-      linear     >= 1.10.1.2,
       sdl2       >= 2.0,
       sdl2-ttf,
       text       >= 1.1.0.0
