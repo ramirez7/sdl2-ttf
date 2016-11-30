@@ -98,9 +98,8 @@ import Foreign.Marshal.Utils  (with, fromBool, toBool)
 import Foreign.Ptr            (Ptr, castPtr, nullPtr)
 import Foreign.Storable       (peek, pokeByteOff)
 import GHC.Generics           (Generic)
-import Linear                 (V4(..))
 import SDL.ExceptionHelper
-import SDL                    (Surface(..))
+import SDL                    (Surface(..), V4(..))
 import SDL.Raw.Filesystem     (rwFromConstMem)
 
 import qualified SDL.Raw

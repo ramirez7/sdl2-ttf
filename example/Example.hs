@@ -8,7 +8,6 @@ import Control.Monad      (forM_)
 import Data.ByteString    (readFile)
 import Data.Text          (Text, unpack)
 import Data.Text.IO       (putStrLn)
-import Linear             (V4(..))
 import Prelude     hiding (putStrLn, readFile)
 import System.Environment (getArgs)
 import System.Exit        (exitFailure)
@@ -17,10 +16,10 @@ import qualified SDL
 import qualified SDL.Font
 
 red :: SDL.Font.Color
-red = V4 255 0 0 0
+red = SDL.V4 255 0 0 0
 
 gray :: SDL.Font.Color
-gray = V4 128 128 128 255
+gray = SDL.V4 128 128 128 255
 
 -- A sequence of example actions to be perfomed and displayed.
 examples :: [(Text, SDL.Window -> FilePath -> IO ())]
