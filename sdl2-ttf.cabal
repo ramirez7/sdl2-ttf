@@ -1,7 +1,7 @@
 Cabal-Version:      >= 1.10
 Name:               sdl2-ttf
 Version:            1.0.0
-maintainer:         Rongcui Dong (karl_1702@188.com)
+maintainer:         Rongcui Dong (rongcuid@outlook.com)
 author:             Ömer Sinan Ağacan (omeragacan@gmail.com)
                   , Sean Chalmers (sclhiannan@gmail.com)
 license-file:       LICENSE
