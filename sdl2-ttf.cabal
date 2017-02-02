@@ -49,7 +49,7 @@ library
 
 flag example
   description: Build the example executable
-  default:     True
+  default:     False
 
 executable sdl2-ttf-example
   ghc-options: -Wall
