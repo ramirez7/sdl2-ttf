@@ -23,7 +23,6 @@ library
     SDL.Raw.Font
 
   other-modules:
-    SDL.ExceptionHelper,
     SDL.Raw.Helper
 
   hs-source-dirs:
@@ -41,8 +40,7 @@ library
     bytestring       >= 0.10.4.0,
     sdl2             >= 2.0,
     template-haskell,
-    text             >= 1.1.0.0,
-    transformers     >= 0.2
+    text             >= 1.1.0.0
 
   default-language:
     Haskell2010

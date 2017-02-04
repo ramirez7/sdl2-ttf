@@ -82,6 +82,7 @@ module SDL.Font
   , blendedGlyph
   ) where
 
+import Control.Exception      (throwIO)
 import Control.Monad          (unless)
 import Control.Monad.IO.Class (MonadIO, liftIO)
 import Data.Bits              ((.&.), (.|.))
@@ -98,9 +99,10 @@ import Foreign.Marshal.Utils  (with, fromBool, toBool)
 import Foreign.Ptr            (Ptr, castPtr, nullPtr)
 import Foreign.Storable       (peek, pokeByteOff)
 import GHC.Generics           (Generic)
-import SDL.ExceptionHelper
-import SDL                    (Surface(..), V4(..))
+import SDL                    (Surface(..), SDLException(SDLCallFailed))
+import SDL.Internal.Exception
 import SDL.Raw.Filesystem     (rwFromConstMem)
+import SDL.Vect               (V4(..))
 
 import qualified SDL.Raw
 import qualified SDL.Raw.Font
@@ -467,7 +469,9 @@ size (Font font) text =
                   w' <- fromIntegral <$> peek w
                   h' <- fromIntegral <$> peek h
                   return (w', h')
-                _ -> throwFailed "SDL.Font.size" "TTF_SizeUNICODE"
+                _ -> do
+                  err <- getError
+                  throwIO $ SDLCallFailed "SDL.Font.size" "TTF_SizeUNICODE" err
 
 -- | Same as 'solid', but renders a single glyph instead.
 solidGlyph :: MonadIO m => Font -> Color -> Char -> m SDL.Surface
