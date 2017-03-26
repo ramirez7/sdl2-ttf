@@ -5,7 +5,7 @@ import Foreign.C
 import Foreign.Ptr
 
 import qualified SDL.Raw.Types as SDL
-import SDL.Raw.Types (Color)
+import SDL.Raw.Types (Color, RWops)
 
 type TTFFont = Ptr ()
 
@@ -18,8 +18,17 @@ foreign import ccall unsafe "TTF_WasInit"
 foreign import ccall unsafe "TTF_Quit"
   quit :: IO ()
 
+foreign import ccall unsafe "TTF_GetError"
+  getTTFError :: IO CString
+
 foreign import ccall unsafe "TTF_OpenFont"
   openFont :: CString -> CInt -> IO TTFFont
+
+foreign import ccall unsafe "TTF_OpenFontRW"
+  openFontRW :: Ptr RWops -> CInt -> IO TTFFont
+
+foreign import ccall unsafe "TTF_OpenFontIndexRW"
+  openFontIndexRW :: Ptr RWops -> CInt -> CInt -> CLong -> IO TTFFont
 
 foreign import ccall unsafe "TTF_CloseFont"
   closeFont :: TTFFont -> IO ()
