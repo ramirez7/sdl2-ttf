@@ -18,7 +18,7 @@ foreign import ccall unsafe "TTF_WasInit"
 foreign import ccall unsafe "TTF_Quit"
   quit :: IO ()
 
-foreign import ccall unsafe "TTF_GetError"
+foreign import ccall unsafe "SDL_GetError"
   getTTFError :: IO CString
 
 foreign import ccall unsafe "TTF_OpenFont"
