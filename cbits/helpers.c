@@ -1,5 +1,5 @@
-#include "SDL2/SDL.h"
-#include "SDL2/SDL_ttf.h"
+#include "SDL.h"
+#include "SDL_ttf.h"
 
 // Lots of SDL_ttf's render functions accept an SDL_Color directly. We send in
 // a pointer instead, which we dereference here. Is there a way to avoid this?
