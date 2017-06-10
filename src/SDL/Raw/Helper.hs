@@ -3,7 +3,6 @@
 Module      : SDL.Raw.Helper
 Copyright   : (c) 2015 Siniša Biđin
 License     : MIT
-Maintainer  : sinisa@bidin.eu
 Stability   : experimental
 
 Exposes a way to automatically generate a foreign import alongside its lifted,

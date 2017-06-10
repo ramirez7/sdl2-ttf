@@ -3,7 +3,6 @@
 Module      : SDL.Raw.Font
 Copyright   : (c) 2015 Siniša Biđin
 License     : MIT
-Maintainer  : sinisa@bidin.eu
 Stability   : experimental
 
 Raw bindings to the @SDL2_ttf@ library. No error-handling is done here. For more
