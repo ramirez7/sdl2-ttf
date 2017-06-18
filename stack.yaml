@@ -1,5 +1,2 @@
-flags: {}
-packages:
-- '.'
-extra-deps: []
-resolver: lts-4.1
+resolver: lts-7.18
+system-ghc: true

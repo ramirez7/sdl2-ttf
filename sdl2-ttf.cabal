@@ -1,46 +1,72 @@
-Cabal-Version:      >= 1.10
-Name:               sdl2-ttf
-Version:            1.0.0
-maintainer:         Rongcui Dong (rongcuid@outlook.com)
-author:             Ömer Sinan Ağacan (omeragacan@gmail.com)
-                  , Sean Chalmers (sclhiannan@gmail.com)
-license-file:       LICENSE
-license:            MIT
-build-type:         Simple
-category:           Foreign binding
-synopsis:           Binding to libSDL2-ttf
-description:        Haskell bindings to the sdl2-ttf C++ library <http://www.libsdl.org/projects/SDL_ttf/>.
-data-files:
-extra-source-files: cbits/rendering.h
-                    examples/ARIAL.TTF
-                    examples/font_test.c
+name:          sdl2-ttf
+version:       2.0.0
+synopsis:      Bindings to SDL2_ttf.
+description:   Haskell bindings to SDL2_ttf C++ library <http://www.libsdl.org/projects/SDL_ttf/>.
+license:       BSD3
+license-file:  LICENSE
+maintainer:    Rongcui Dong (rongcuid@outlook.com)
+author:        Rongcui Dong (rongcuid@outlook.com),
+               Siniša Biđin <sinisa@bidin.eu>,
+               Ömer Sinan Ağacan (omeragacan@gmail.com),
+               Sean Chalmers (sclhiannan@gmail.com)
+copyright:     Copyright © 2013-2017 Ömer Sinan Ağacan, Siniša Biđin, Rongcui Dong
+category:      Font, Foreign binding, Graphics
+build-type:    Simple
+cabal-version: >=1.10
+
+source-repository head
+  type:     git
+  location: https://github.com/haskell-game/sdl2-ttf
 
 library
-  hs-source-dirs:     src
-  build-depends:      base >= 3 && < 5, sdl2 >= 2, transformers
-  default-extensions: ForeignFunctionInterface
-  exposed-modules:    SDL.TTF.Types,
-                      SDL.TTF.FFI
-                      SDL.TTF
-  other-modules:      SDL.TTF.Internals
-  ghc-options:        -Wall
-  include-dirs:       cbits
-  c-sources:          cbits/rendering.c
+  ghc-options: -Wall
 
-  pkgconfig-depends:  sdl2 >= 2.0.2, SDL2_ttf >= 2
+  exposed-modules:
+    SDL.Font,
+    SDL.Raw.Font
 
-  default-language:   Haskell2010
-  
+  other-modules:
+    SDL.Raw.Helper
+
+  hs-source-dirs:
+    src
+
+  pkgconfig-depends:
+    sdl2 >= 2.0.3,
+    SDL2_ttf >= 2.0.0
+
+  c-sources:
+    cbits/helpers.c
+
+  build-depends:
+    base             >= 4.7 && < 5,
+    bytestring       >= 0.10.4.0,
+    sdl2             >= 2.0,
+    template-haskell,
+    text             >= 1.1.0.0
+
+  default-language:
+    Haskell2010
+
   if os(windows)
     cpp-options: -D_SDL_main_h
 
-executable font-test
-  main-is:          font_test.hs
-  hs-source-dirs:   examples
-  build-depends:    base >= 3 && <5, sdl2, sdl2-ttf, linear
-  ghc-options:      -Wall
+flag example
+  description: Build the example executable
+  default:     False
+
+executable sdl2-ttf-example
+  ghc-options: -Wall
+  hs-source-dirs: example
+  main-is: Example.hs
   default-language: Haskell2010
 
-source-repository head
-    type:     git
-    location: https://github.com/carldong/sdl2-ttf
+  if flag(example)
+    build-depends:
+      base       >= 4.7 && < 5,
+      bytestring >= 0.10.4.0,
+      sdl2       >= 2.0,
+      sdl2-ttf,
+      text       >= 1.1.0.0
+  else
+    buildable: False
