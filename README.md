@@ -29,5 +29,6 @@ directory.
 
 ```bash
 cd sdl2-ttf
+cabal configure -fexample
 cabal run path/to/some/font.type
 ```
