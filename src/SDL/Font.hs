@@ -9,6 +9,7 @@ Bindings to the @SDL2_ttf@ library
 <http://www.libsdl.org/projects/SDL_ttf/docs/SDL_ttf.html>
 which itself is a wrapper around the FreeType library.
 The bindings should allow you to load fonts and
+render 'Text' in various styles to an @SDL@ 'Surface'.
 
 You can safely assume that any monadic function listed here is capable of
 throwing an 'SDLException' in case it encounters an error.
