@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -Wno-missing-pattern-synonym-signatures #-}
+{-# OPTIONS_GHC -Wno-missing-signatures #-}
 {-|
 
 Module      : SDL.Raw.Font
