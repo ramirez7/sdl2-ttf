@@ -10,7 +10,7 @@ author:        Rongcui Dong (rongcuid@outlook.com),
                Siniša Biđin <sinisa@bidin.eu>,
                Ömer Sinan Ağacan (omeragacan@gmail.com),
                Sean Chalmers (sclhiannan@gmail.com)
-copyright:     Copyright © 2013-2017 Ömer Sinan Ağacan, Siniša Biđin, Rongcui Dong
+copyright:     Copyright © 2013-2020 Ömer Sinan Ağacan, Siniša Biđin, Rongcui Dong and others (see git commits)
 category:      Font, Foreign binding, Graphics
 build-type:    Simple
 cabal-version: >=1.10
