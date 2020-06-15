@@ -27,6 +27,9 @@ A small example executable is included with the library. It loads a given font
 and uses it to display text in various ways. You can find it in the `example`
 directory.
 
+Note: this example works, but is written in sdl1-style, so instead
+you should change surfaces to textures and follow the usual sdl2 API.
+
 ```bash
 cd sdl2-ttf
 cabal configure -fexample

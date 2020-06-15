@@ -1,3 +1,8 @@
+-- Note: this code uses the old, inherited from sdl1, surface-based
+-- API for displaying on screen. It can't be used together with the new
+-- renderer API. You should instead copy the surface to a texture ASAP
+-- and then display the texture using the renderer in the usual
+-- sdl2 way.
 {-# LANGUAGE LambdaCase        #-}
 {-# LANGUAGE OverloadedStrings #-}
 
